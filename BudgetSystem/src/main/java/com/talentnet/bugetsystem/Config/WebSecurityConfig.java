@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import javax.sql.DataSource;
 
-import com.dxc.librarymanagement.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +16,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import com.talentnet.bugetsystem.Service.UserDetailService;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private UserDetailsServiceImpl userDetailsService;
+	private UserDetailService userDetailService;
 
 	@Autowired
 	private DataSource dataSource;
@@ -42,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userDetailService).passwordEncoder(passwordEncoder());
 	}
 
 	@Override
@@ -51,11 +51,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable();
 
 		// Các trang không yêu cầu login
-		http.authorizeRequests().antMatchers("/", "/login", "/logout", "/register", "/resources/**", "/views**", "/app/**").permitAll();
+		http.authorizeRequests().antMatchers("/", "/login", "/logout","/resources/**", "/views**", "/app/**").permitAll();
 
 		// Trang /userInfo yêu cầu phải login với vai trò ROLE_USER hoặc ROLE_ADMIN.
 		// Nếu chưa login, nó sẽ redirect tới trang /login.
-		http.authorizeRequests().antMatchers("/home").access("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')");
+		http.authorizeRequests().antMatchers("/user/**").access("hasRole('ROLE_USER')");
 
 		// Trang chỉ dành cho ADMIN
 		http.authorizeRequests().antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')");
@@ -79,13 +79,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						authorities.forEach(authority -> {
 							if (authority.getAuthority().equals("ROLE_USER")) {
 								try {
-									response.sendRedirect("/home");
+									response.sendRedirect("/user/home");
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
 							} else if (authority.getAuthority().equals("ROLE_ADMIN")) {
 								try {
-									response.sendRedirect("/admin/bookmanagement");
+									response.sendRedirect("/admin/home");
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -95,24 +95,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						});
 					}
 				})//
-				.failureUrl("/login?error=true")//
-				.usernameParameter("username")//
+				.failureUrl("/login?error=true")
+				.usernameParameter("username")
 				.passwordParameter("password")
 				// Cấu hình cho Logout Page.
 				.and().logout().logoutUrl("/logout").logoutSuccessUrl("/login");
 
-		// Cấu hình Remember Me.
-		http.authorizeRequests().and() //
-				.rememberMe().tokenRepository(this.persistentTokenRepository()) //
-				.tokenValiditySeconds(1 * 24 * 60 * 60); // 24h
-
-	}
-
-	@Bean
-	public PersistentTokenRepository persistentTokenRepository() {
-		JdbcTokenRepositoryImpl db = new JdbcTokenRepositoryImpl();
-		db.setDataSource(dataSource);
-		return db;
 	}
 
 }

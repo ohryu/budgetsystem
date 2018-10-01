@@ -1,0 +1,271 @@
+/*css admin*/
+.navbar-inverse {
+	background-color: #189;
+	border-color: #FFF;
+}
+
+.navbar-inverse .navbar-brand, a {
+	color: #FFF;
+}
+
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:focus,
+	.navbar-inverse .navbar-nav>.active>a:hover {
+	color: #FFF;
+	background-color: #189;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+	color: #FFF;
+}
+
+.bottomCustom {
+	text-align: center;
+    position: inherit;
+    color: #FFF;
+    padding-top: 1%;
+}
+
+.copyright {
+	background-color: #189;
+	text-align: center ;
+	padding-top: 1%;
+	padding-bottom:1%;
+	font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+	color:#FFF;
+	display:block;
+	
+}
+/*END css admin*/
+/*-------------------------------------*/
+/*css book management*/
+/* search field */
+.topnav {
+  overflow: hidden;
+  background-color: #e9e9e9;
+}
+
+.topnav a {
+  float: left;
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #2196F3;
+  color: white;
+}
+
+
+
+.topnav input[type=text] {
+  width: 100%;
+    padding: 1em;
+    padding-right: 7em;
+    position: relative;
+    top: 0;
+}
+
+
+.topnav .search-container button:hover {
+  background: #ccc;
+}
+
+@media screen and (max-width: 600px) {
+  .topnav .search-container {
+    float: none;
+  }
+  .topnav a, .topnav input[type=text], .topnav .search-container button {
+    float: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 14px;
+  }
+  .topnav input[type=text] {
+    border: 1px solid #ccc;  
+  }
+}
+/*END css book banagement*/
+/*-------------------------------------*/
+/*css button add*/
+.btn-info {
+	color: #fff;
+	background-color: #47e047;
+	border-color: #47e047;
+	margin-bottom: 1%;
+	padding: 7px 10px;
+	font-size: 11px;
+	line-height: 1.3333333;
+	border-radius: 3px;
+}
+/*END css button add*/
+/*-------------------------------------*/
+/*css button custom*/
+.btn-custom {
+	color: #fff;
+	background-color: #17a2b8;
+	border-color: #17a2b8;
+}
+
+/*END css button add*/
+/*-------------------------------------*/
+/*css table*/
+.table {
+	margin-top: 3%;
+	width: 100%;
+	max-width: 100%;
+	margin-bottom: 2%;
+}
+
+.table1 {
+	margin-top: 3%;
+	width: 100%;
+	max-width: 100%;
+	margin-bottom: 2%;
+}
+
+thead {
+	background-color: #F5F5DC;
+}
+
+tbody {
+	background-color: #F0FFFF;
+}
+
+.trMenu th {
+	text-align: center;
+}
+
+table, td, th {
+	border: 1px solid #ddd;
+}
+
+.table>thead>tr>th {
+	vertical-align: baseline;
+	border-bottom: 2px solid #ddd;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th,
+	.table>thead>tr>td, .table>thead>tr>th {
+	padding: 8px;
+	line-height: 1.42857143;
+	vertical-align: baseline;
+	border-top: 1px solid #ddd;
+}
+
+.textPosition {
+	text-align: center;
+}
+
+.tdColum {
+	width: 21%;
+	text-align: center;
+	background-color: #F5F5DC;
+}
+
+.tdColum2 {
+	width: 79%%
+}
+.tdColum3{
+	width: 15%;
+    text-align: center;
+    background-color: #F5F5DC;
+}
+.form-control {
+	margin-top: 1%;
+	margin-bottom: -1%;
+	width: 99%;
+}
+
+.tdScroll {
+	width: 460px;
+	height: 60px;
+	overflow: auto;
+}
+/*END css table*/
+/*-------------------------------------*/
+/*css nextpage*/
+#nextPage {
+	width: 4%;
+	text-align: center;
+}
+
+.divNextPage {
+	text-align: center;
+	padding-bottom: 3%;
+}
+
+.divNextPage a {
+	color: #337ab7;
+}
+/*END css nextpage*/
+/*-------------------------------------*/
+/*css div choose file*/
+#divchooseFile {
+	width: 134px;
+    height: 198px;
+    border: 1px solid #aaaaaa;
+}
+/*END css div choose file*/
+/*-------------------------------------*/
+/*css sidenav of report page*/
+#mySidenav a {
+	position: absolute; /* Position them relative to the browser window */
+	left: -80px; /* Position them outside of the screen */
+	transition: 0.3s; /* Add transition on hover */
+	padding: 15px; /* 15px padding */
+	width: 100px; /* Set a specific width */
+	text-decoration: none;
+	font-size: 20px;
+	color: white;
+	border-radius: 0 5px 5px 0;
+	margin-top: 3%;
+}
+
+#mySidenav a:hover {
+	left: 0;
+}
+
+#mySidenav a:focus {
+	left: 0;
+}
+
+#mySidenav a:focus {
+	left: 0;
+}
+.fa-spin{
+	font-size: 30px;
+	color: green;
+}
+.fa-close{
+	font-size: 30px;
+	color: red;
+}
+.fa-check{
+	font-size: 30px;
+	color: green;
+}
+#spin-icon, #close-icon, #check-icon{
+	background-color: rgba(0,0,0,0) !important;
+	border: none;
+	cursor: default;
+}
+table.table-striped>tbody>tr>td>img{
+	max-width: 40px;
+}
+table.table-striped>tbody>tr>td{
+	padding: 5px !important;
+    vertical-align: middle;
+    text-align: center;	
+}
+
