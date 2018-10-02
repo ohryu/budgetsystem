@@ -14,50 +14,71 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.talentnet.bugetsystem.Utils.WebUtils;
-import com.talentnet.bugetsystem.DAO.RoleDAO;
-import com.talentnet.bugetsystem.DAO.UserDAO;
-import com.talentnet.bugetsystem.DAOImplement.RoleDAOImpl;
 import com.talentnet.bugetsystem.Entity.BUser;
 import com.talentnet.bugetsystem.Entity.Role;
+import com.talentnet.bugetsystem.Entity.UserRole;
+import com.talentnet.bugetsystem.Repository.RoleRepo;
+import com.talentnet.bugetsystem.Repository.UserRepo;
+import com.talentnet.bugetsystem.Repository.UserroleRepo;
 
 @Controller
 public class MainController {
-	@Autowired UserDAO userDAO;
-	@Autowired RoleDAO roleDAO;
+	@Autowired UserRepo userRepo;
+	@Autowired RoleRepo roleRepo;
+	@Autowired UserroleRepo userroleRepo;
 	@Autowired PasswordEncoder passwordEncoder;
+	
 
 	@RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
 	public String loginPage(Model model) {
 		/*BUser user = new BUser();
 		user.setUsername("luu@gmail.com");
 		user.setPassword(passwordEncoder.encode("123"));
-		user.setRole(roleDAO.findByRoleid(2));
-		user.setFullname("Luu Dao");
+		user.setRole(roleRepo.findByRoleid(2));
+		user.setFullname("Luu Repo");
 		user.setActive(true);
-		userDAO.save(user);*/
+		userRepo.save(user);*/
 		return "login";
 	}
 	
-	@RequestMapping(value = "/user/home", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/dept", method = RequestMethod.GET)
 	public String userHome(Model model, Principal principal) {
 		String userName = principal.getName();
 		System.out.println("User Name: " + userName);
 		List<String> userInfo = new ArrayList<>();
-		userInfo.add(this.userDAO.findByUsername(principal.getName()).getFullname());
-		userInfo.add(this.userDAO.findByUsername(principal.getName()).getRole().getRolename());
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		model.addAttribute("userInfo", userInfo);
-		return "home";
+		List<UserRole> userrole = userroleRepo.findByUser(userRepo.findByUsername(principal.getName()));
+		List<List<String>> reviewer = new ArrayList<>();
+		List<List<String>> reporter = new ArrayList<>();
+		for(UserRole urole : userrole) {
+			List<String> ur = new ArrayList<>();
+			if(urole.getGroup()!=null) {
+				ur.add(urole.getGroup().getCompany().getCompany_name());
+				ur.add(urole.getGroup().getGroup_code());
+				reviewer.add(ur);
+			}else {
+				ur.add(urole.getGroup().getCompany().getCompany_name());
+				ur.add(urole.getDept().getDept_name());
+				ur.add(urole.getDept().getDept_code());
+				reviewer.add(ur);
+			}
+		}
+		model.addAttribute("reviewer", reviewer);
+		model.addAttribute("reporter", reporter);
+		return "user_dept";
 	}
 	
-	@RequestMapping(value = "/admin/home", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/summary", method = RequestMethod.GET)
 	public String adminHome(Model model, Principal principal) {
 		String userName = principal.getName();
 		System.out.println("User Name: " + userName);
 		List<String> userInfo = new ArrayList<>();
-		userInfo.add(this.userDAO.findByUsername(principal.getName()).getFullname());
-		userInfo.add(this.userDAO.findByUsername(principal.getName()).getRole().getRolename());
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		model.addAttribute("userInfo", userInfo);
-		return "admin";
+		return "summary";
 	}
 	
 	@RequestMapping(value = "/403", method = RequestMethod.GET)

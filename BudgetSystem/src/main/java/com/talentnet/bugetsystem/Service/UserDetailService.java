@@ -14,15 +14,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.talentnet.bugetsystem.DAO.UserDAO;
 import com.talentnet.bugetsystem.Entity.BUser;
+import com.talentnet.bugetsystem.Repository.UserRepo;
 
 
 @Service
 @Transactional
 public class UserDetailService implements UserDetailsService{
 	@Autowired
-	private UserDAO userDAO;
+	private UserRepo userDAO;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

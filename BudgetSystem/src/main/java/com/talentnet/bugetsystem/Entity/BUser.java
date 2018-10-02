@@ -19,7 +19,7 @@ public class BUser implements Serializable{
 	@Id
 	@Column(name = "USER_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer user_id;
+	private Integer userid;
 	
 	@Column(name = "USERNAME")
 	private String username;
@@ -37,12 +37,12 @@ public class BUser implements Serializable{
 	@Column(name = "ACTIVE")
 	private boolean active;
 
-	public Integer getUser_id() {
-		return user_id;
+	public Integer getUserid() {
+		return userid;
 	}
 
-	public void setUser_id(Integer user_id) {
-		this.user_id = user_id;
+	public void setUserid(Integer userid) {
+		this.userid = userid;
 	}
 
 	public String getUsername() {

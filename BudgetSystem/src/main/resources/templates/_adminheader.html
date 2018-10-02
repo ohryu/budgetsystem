@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Administrator</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- link bootstrap + font awesome -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script
+	src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
+<!-- END link bootstrap + font awesome -->
+<link rel="stylesheet" href="../resources/css/adminCss2.css"
+	type="text/css" />
+<script src="https://unpkg.com/sweetalert2@7.17.0/dist/sweetalert2.all.js"></script>
+<script src="/resources/js/jquery.twbsPagination.min.js"></script>
+<script src="/resources/core/jquery.autocomplete.min.js" /></script>
+<link href="/resources/core/main.css" rel="stylesheet">
+
+
+<link
+	href="https://cdn.rawgit.com/mdehoog/Semantic-UI/6e6d051d47b598ebab05857545f242caf2b4b48c/dist/semantic.min.css"
+	rel="stylesheet" type="text/css" />
+<link type="text/css" rel="stylesheet"
+	href="/resources/css/adminCss2.css" />
+<script
+	src="https://cdn.rawgit.com/mdehoog/Semantic-UI/6e6d051d47b598ebab05857545f242caf2b4b48c/dist/semantic.min.js"></script>
+
+<link
+	href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
+	rel="stylesheet" type="text/css" />
+
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script src="/resources/js/statistic.js"></script>
+</head>
+<body>
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target="#myNavbar">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<div th:switch="${userInfo[1]}">
+					<a th:case="'ROLE_ADMIN'" class="navbar-brand" href="/admin/summary" th:switch="${userInfo[1]}">Budget System</a>
+					<a th:case="'ROLE_USER'" class="navbar-brand" href="/user/summary" th:switch="${userInfo[1]}">Budget System</a>
+				</div>
+				
+			</div>
+			<div class="collapse navbar-collapse" id="myNavbar">
+				<ul class="nav navbar-nav">
+
+					<li th:switch="${userInfo[1]}" id="summary">
+						<a th:case="'ROLE_ADMIN'" href="/admin/summary" aria-expanded="false"> <i class="glyphicon glyphicon-book"></i>Summary</a>
+					</li>
+					<li th:switch="${userInfo[1]}" id="dept">
+						<a th:case="'ROLE_ADMIN'" href="/admin/dept" aria-expanded="false"><i class="glyphicon glyphicon-tag"></i> Dept</a>
+						<a th:case="'ROLE_USER'" href="/user/dept"  aria-expanded="false"><i class="glyphicon glyphicon-tag"></i> Dept</a>
+					</li>
+					<li th:switch="${userInfo[1]}" id="account">
+						<a th:case="'ROLE_ADMIN'" href="/admin/account" aria-expanded="false"> <i class="glyphicon glyphicon-file"></i>Account</a>
+						<a th:case="'ROLE_USER'" href="/user/account" aria-expanded="false"> <i class="glyphicon glyphicon-file"></i>Account</a>
+					</li>
+					<li id="historical-amoumt">
+						<a href="/admin/histoticalamount" aria-expanded="false"> <i class="glyphicon glyphicon-file"></i>Historical Amount</a>
+					</li>
+
+				</ul>
+
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#" th:text="${userInfo[0]}"></a></li>
+					<li><a th:href="@{/logout}"><span class="glyphicon glyphicon-log-out"></span>
+							Logout</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+</body>
+</html>
