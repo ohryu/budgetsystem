@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Ticket Management</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css"
+	href="../resources/css/general.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript"
+	src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
+<script src="/resources/js/ticketmanagement.js"></script>
+
+</head>
+<body>
+	<th:block th:include="_adminheader"></th:block>
+	<div class="container">
+		<h2>Tickets Management</h2>
+		<div class="topnav">
+			<div class="search-container">
+				<form action="#">
+					<input type="text" id="w-input-searchuser" placeholder="Search.."
+						name="search">
+				</form>
+			</div>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr class="trMenu">
+						<th>ID User</th>
+						<th>User Name</th>
+						<th>Full Name</th>
+						<th>Role</th>
+						<th>Limit Number</th>
+						<th>Borrowed Number</th>
+						<th>
+							<!--button modal add-->
+							<button type="button" class="btn btn-info btn-lg"
+								data-toggle="modal" data-target="#addModal">
+								<span class="glyphicon glyphicon-plus"></span>
+							</button>
+
+						</th>
+					</tr>
+				</thead>
+				<tbody id="tickets-management"></tbody>
+			</table>
+		</div>
+
+		<div class="divNextPage">
+			<nav aria-label="Page navigation"
+				style="text-align: center; padding-bottom: 2%;">
+				<ul class="pagination" id="pagination"></ul>
+			</nav>
+		</div>
+
+		<!-- Modal Add new-->
+		<div class="modal fade" id="addModal" role="dialog">
+			<div class="modal-dialog">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Add New User</h4>
+					</div>
+					<div class="modal-body">
+						<div class="wrapper">
+							<div class="table-responsive">
+								<form id="addModalForm" novalidate method="post" enctype="multipart/form-data" th:action="@{/admin/uploadfile}">
+									<input type="file" name="file" accept=".xlsx" />
+									<div class="modal-footer">
+										<button type="submit" class="btn btn-custom">Submit</button>
+										<button id="add-close" type="button" class="btn btn-custom" data-dismiss="modal">Close</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

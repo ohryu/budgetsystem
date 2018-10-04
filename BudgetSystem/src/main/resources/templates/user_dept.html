@@ -8,29 +8,15 @@
 	<th:block th:include="_adminheader"></th:block>
 	<div class="reviewer-role" th:if="${not #lists.isEmpty(reviewer)}">
 		<h2>Role Reviewer</h2>
-		<table>
-			<tr>
-				<th>COMPANY</th>
-				<th>GROUP</th>
-			</tr>
-			<tr th:each="role : ${reviewer}">
-	            <td th:text="${reviewer[0]}"></td>
-	            <td th:text="${reviewer[1]}"></td>
-       		</tr>
-		</table>
+		<div th:each="role : ${reviewer}">
+	    	<a th:href="${'/user/summary/review/'+role[1]}" th:text="${role[0]}" class="btn btn-default"></a>
+       	</div>
 	</div>
-	<div class="reviewer-role" th:if="${not #lists.isEmpty(reporter)}">
-		<h2>Role Reviewer</h2>
-		<table>
-			<tr>
-				<th>COMPANY</th>
-				<th>DEPT</th>
-			</tr>
-			<tr th:each="role : ${reporter}">
-	            <td th:text="${reporter[0]}"></td>
-	            <td th:text="${reporter[1]}"></td>
-       		</tr>
-		</table>
+	<div class="reporter-role" th:if="${not #lists.isEmpty(reporter)}">
+		<h2>Role Reporter</h2>
+		<div th:each="role : ${reporter}">
+	        <a th:href="${'/user/summary/report/'+role[2]}" th:text="${role[0]+'>'+role[1]}" class="btn btn-default"></a>
+       	</div>
 	</div>
 </body>
 </html>

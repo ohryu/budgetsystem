@@ -64,12 +64,13 @@
 						<a th:case="'ROLE_ADMIN'" href="/admin/dept" aria-expanded="false"><i class="glyphicon glyphicon-tag"></i> Dept</a>
 						<a th:case="'ROLE_USER'" href="/user/dept"  aria-expanded="false"><i class="glyphicon glyphicon-tag"></i> Dept</a>
 					</li>
-					<li th:switch="${userInfo[1]}" id="account">
-						<a th:case="'ROLE_ADMIN'" href="/admin/account" aria-expanded="false"> <i class="glyphicon glyphicon-file"></i>Account</a>
-						<a th:case="'ROLE_USER'" href="/user/account" aria-expanded="false"> <i class="glyphicon glyphicon-file"></i>Account</a>
+					<li th:switch="${userInfo[1]}" id="historical-amoumt">
+						<a th:case="'ROLE_ADMIN'" href="/admin/histoticalamount" aria-expanded="false"> <i class="glyphicon glyphicon-file"></i>Historical Amount</a>
+						<a th:case="'ROLE_USER'" href="/user/histoticalamount" aria-expanded="false"> <i class="glyphicon glyphicon-file"></i>Historical Amount</a>
 					</li>
-					<li id="historical-amoumt">
-						<a href="/admin/histoticalamount" aria-expanded="false"> <i class="glyphicon glyphicon-file"></i>Historical Amount</a>
+					<li th:switch="${userInfo[1]}" id="account">
+						<a th:case="'ROLE_ADMIN'" href="/admin/account" aria-expanded="false"> <i class="glyphicon glyphicon-user"></i>Account</a>
+						<a th:case="'ROLE_USER'" href="/user/account" aria-expanded="false"> <i class="glyphicon glyphicon-lock"></i>Password</a>
 					</li>
 
 				</ul>

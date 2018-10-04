@@ -56,13 +56,13 @@ public class MainController {
 			List<String> ur = new ArrayList<>();
 			if(urole.getGroup()!=null) {
 				ur.add(urole.getGroup().getCompany().getCompany_name());
-				ur.add(urole.getGroup().getGroup_code());
+				ur.add(urole.getGroup().getCompany().getCompany_id().toString());
 				reviewer.add(ur);
 			}else {
-				ur.add(urole.getGroup().getCompany().getCompany_name());
+				ur.add(urole.getDept().getGroup().getCompany().getCompany_name());
 				ur.add(urole.getDept().getDept_name());
-				ur.add(urole.getDept().getDept_code());
-				reviewer.add(ur);
+				ur.add(urole.getDept().getDept_id().toString());
+				reporter.add(ur);
 			}
 		}
 		model.addAttribute("reviewer", reviewer);
@@ -79,6 +79,16 @@ public class MainController {
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		model.addAttribute("userInfo", userInfo);
 		return "summary";
+	}
+	@RequestMapping(value = "/admin/histoticalamount", method = RequestMethod.GET)
+	public String history(Model model, Principal principal) {
+		String userName = principal.getName();
+		System.out.println("User Name: " + userName);
+		List<String> userInfo = new ArrayList<>();
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
+		model.addAttribute("userInfo", userInfo);
+		return "admin_historical_amount";
 	}
 	
 	@RequestMapping(value = "/403", method = RequestMethod.GET)

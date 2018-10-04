@@ -20,10 +20,10 @@ public class HistoricalAmount implements Serializable{
 	private Integer id;
 	
 	@Column(name = "WB_NAME")
-	private String wb_name;
-	
+	private String wbname;
+
 	@Column(name = "WB_CODE")
-	private String wb_code;
+	private String wbcode;
 	
 	@Column(name = "SPONSOR")
 	private String sponsor;
@@ -31,7 +31,7 @@ public class HistoricalAmount implements Serializable{
 	@Column(name = "AMOUNT")
 	private Integer amount;
 
-	public Integer getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -39,20 +39,20 @@ public class HistoricalAmount implements Serializable{
 		this.id = id;
 	}
 
-	public String getWb_name() {
-		return wb_name;
+	public String getWbname() {
+		return wbname;
 	}
 
-	public void setWb_name(String wb_name) {
-		this.wb_name = wb_name;
+	public void setWbname(String wbname) {
+		this.wbname = wbname;
 	}
 
-	public String getWb_code() {
-		return wb_code;
+	public String getWbcode() {
+		return wbcode;
 	}
 
-	public void setWb_code(String wb_code) {
-		this.wb_code = wb_code;
+	public void setWbcode(String wbcode) {
+		this.wbcode = wbcode;
 	}
 
 	public String getSponsor() {
