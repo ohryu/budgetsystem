@@ -3,9 +3,82 @@
 <head>
 <title>Admin</title>
 </head>
- 
 <body>
      <th:block th:include="_adminheader"></th:block>
+     <div class="w3-sidebar w3-bar-block w3-border-right" style="display:none" id="mySidebar">
+		<button id="close" class="w3-bar-item w3-large">Close &times;</button>
+		<div th:switch="${userInfo[2]}">
+			<div th:case="'REVIEWER'">
+				<div th:each="role : ${roles}">
+					<label th:text="${role[0].getGroup().getGroupcode()}"></label>
+					<a class="w3-bar-item w3-button" th:each="dept : ${role}" th:data-dept-id="${dept.getDeptid()}" th:text="${dept.getDeptname()}"></a>
+				</div>
+			</div>
+			<div th:case="'REPORTER'">
+				<a class="w3-bar-item w3-button" th:each="role : ${roles}" th:data-dept-id="${role.getDept().getDeptid()}" th:text="${dept.getDept().getDeptname()}"></a>
+			</div>
+		</div>
+	 </div>
+     <div>
+     	<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#addModal">Add Budget</button>
+		<button class="btn btn-info btn-lg" id="menu"><i class="glyphicon glyphicon-list"></i></button>
+		<div class="modal fade" id="addModal" role="dialog">
+			<div class="modal-dialog">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Add New Budget</h4>
+					</div>
+					<div class="modal-body">
+						<div class="wrapper">
+							<div class="table-responsive">
+								<form>
+									<label>Budget Control Dept</label>
+									<p id="c-dept" data-dept="">FAD</p>
+									<br>
+									<label>Sponsor Dept</label>
+									<div>
+										<input id="all" type="checkbox">ALL
+										<input class="sponsor" value="FAD" type="checkbox">FAD
+										<input class="sponsor" value="POS" type="checkbox">POS
+									</div>
+									<label>Budget Line</label>
+									<select id="bg-line">
+										<option value="3">Taxi</option>
+										<option value="2">Rental</option>
+									</select>
+									<div class="modal-footer">
+										<button id="add-budget" type="button" class="btn btn-custom" data-dismiss="modal">Add</button>
+										<button id="add-close" type="button" class="btn btn-custom" data-dismiss="modal">Close</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+     </div>
+     <div class="summary table-responsive">
+     	<table class="table table-striped">
+			<tr>
+				<th>Budget control Dept</th>
+				<th>Sponsor Dept</th>
+				<th>Budget line</th>
+				<th>Group</th>
+				<th>Detail</th>
+				<th>Code</th>
+				<th>Budget Amount</th>
+				<th>Time Allocation</th>
+				<th>Start Time</th>
+				<th>Expense</th>
+				<th>Delete</th>
+				<th>Tool</th>
+			</tr>
+		</table>		
+     </div>
 </body>
- 
+ <script src="/resources/js/summary.js"></script>
 </html>

@@ -19,7 +19,7 @@ public class CriteriaDetail implements Serializable{
 	@Id
 	@Column(name = "CD_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer cd_id;
+	private Integer cdid;
 	
 	@ManyToOne
 	@JoinColumn(name = "CRITERIA_ID")
@@ -32,12 +32,12 @@ public class CriteriaDetail implements Serializable{
 	@Column(name = "AMOUNT")
 	private Integer amount;
 
-	public Integer getCd_id() {
-		return cd_id;
+	public Integer getCdid() {
+		return cdid;
 	}
 
-	public void setCd_id(Integer cd_id) {
-		this.cd_id = cd_id;
+	public void setCdid(Integer cdid) {
+		this.cdid = cdid;
 	}
 
 	public Criteria getCriteria() {

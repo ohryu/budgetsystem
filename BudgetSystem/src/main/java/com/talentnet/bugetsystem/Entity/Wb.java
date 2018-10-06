@@ -19,40 +19,40 @@ public class Wb implements Serializable{
 	@Id
 	@Column(name = "WB_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer wb_id;
+	private Integer wbid;
 	
 	@Column(name = "WB_NAME")
-	private String wb_name;
+	private String wbname;
 	
 	@Column(name = "WB_CODE")
-	private String wb_code;
+	private String wbcode;
 	
 	@ManyToOne
 	@JoinColumn(name = "BL_ID")
 	private BudgetLine bline;
 
-	public Integer getWb_id() {
-		return wb_id;
+	public Integer getWbid() {
+		return wbid;
 	}
 
-	public void setWb_id(Integer wb_id) {
-		this.wb_id = wb_id;
+	public void setWbid(Integer wbid) {
+		this.wbid = wbid;
 	}
 
-	public String getWb_name() {
-		return wb_name;
+	public String getWbname() {
+		return wbname;
 	}
 
-	public void setWb_name(String wb_name) {
-		this.wb_name = wb_name;
+	public void setWbname(String wbname) {
+		this.wbname = wbname;
 	}
 
-	public String getWb_code() {
-		return wb_code;
+	public String getWbcode() {
+		return wbcode;
 	}
 
-	public void setWb_code(String wb_code) {
-		this.wb_code = wb_code;
+	public void setWbcode(String wbcode) {
+		this.wbcode = wbcode;
 	}
 
 	public BudgetLine getBline() {

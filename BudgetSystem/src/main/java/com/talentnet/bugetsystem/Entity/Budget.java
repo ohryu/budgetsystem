@@ -19,7 +19,7 @@ public class Budget implements Serializable{
 	@Id
 	@Column(name = "BUDGET_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer budget_id;
+	private Integer budgetid;
 	
 	@ManyToOne
 	@JoinColumn(name = "DEPT_ID")
@@ -28,12 +28,12 @@ public class Budget implements Serializable{
 	@Column(name = "STATUS")
 	private boolean status;
 
-	public Integer getBudget_id() {
-		return budget_id;
+	public Integer getBudgetid() {
+		return budgetid;
 	}
 
-	public void setBudget_id(Integer budget_id) {
-		this.budget_id = budget_id;
+	public void setBudgetid(Integer budgetid) {
+		this.budgetid = budgetid;
 	}
 
 	public Dept getDept() {

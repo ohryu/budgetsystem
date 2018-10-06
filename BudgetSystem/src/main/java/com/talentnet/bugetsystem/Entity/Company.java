@@ -17,25 +17,25 @@ public class Company implements Serializable{
 	@Id
 	@Column(name = "COMPANY_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer company_id;
+	private Integer companyid;
 
 	@Column(name = "COMPANY_NAME")
-	private String company_name;
+	private String companyname;
 
-	public Integer getCompany_id() {
-		return company_id;
+	public Integer getCompanyid() {
+		return companyid;
 	}
 
-	public void setCompany_id(Integer company_id) {
-		this.company_id = company_id;
+	public void setCompanyid(Integer companyid) {
+		this.companyid = companyid;
 	}
 
-	public String getCompany_name() {
-		return company_name;
+	public String getCompanyname() {
+		return companyname;
 	}
 
-	public void setCompany_name(String company_name) {
-		this.company_name = company_name;
+	public void setCompanyname(String companyname) {
+		this.companyname = companyname;
 	}
 
 	

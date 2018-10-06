@@ -19,40 +19,40 @@ public class BudgetLine implements Serializable{
 	@Id
 	@Column(name = "BL_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer bl_id;
+	private Integer blid;
 
 	@Column(name = "BL_CODE")
-	private String bl_code;
+	private String blcode;
 	
 	@Column(name = "BL_NAME")
-	private String bl_name;
+	private String blname;
 	
 	@ManyToOne
 	@JoinColumn(name = "DEPT_id")
 	private Dept dept;
 
-	public Integer getBl_id() {
-		return bl_id;
+	public Integer getBlid() {
+		return blid;
 	}
 
-	public void setBl_id(Integer bl_id) {
-		this.bl_id = bl_id;
+	public void setBlid(Integer blid) {
+		this.blid = blid;
 	}
 
-	public String getBl_code() {
-		return bl_code;
+	public String getBlcode() {
+		return blcode;
 	}
 
-	public void setBl_code(String bl_code) {
-		this.bl_code = bl_code;
+	public void setBlcode(String blcode) {
+		this.blcode = blcode;
 	}
 
-	public String getBl_name() {
-		return bl_name;
+	public String getBlname() {
+		return blname;
 	}
 
-	public void setBl_name(String bl_name) {
-		this.bl_name = bl_name;
+	public void setBlname(String blname) {
+		this.blname = blname;
 	}
 
 	public Dept getDept() {

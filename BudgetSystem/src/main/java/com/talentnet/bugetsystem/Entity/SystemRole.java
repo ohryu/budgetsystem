@@ -17,25 +17,25 @@ public class SystemRole implements Serializable{
 	@Id
 	@Column(name = "ROLE_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer role_id;
+	private Integer roleid;
 	
 	@Column(name = "ROLE_NAME")
-	private String role_name;
+	private String rolename;
 
-	public Integer getRole_id() {
-		return role_id;
+	public Integer getRoleid() {
+		return roleid;
 	}
 
-	public void setRole_id(Integer role_id) {
-		this.role_id = role_id;
+	public void setRoleid(Integer roleid) {
+		this.roleid = roleid;
 	}
 
-	public String getRole_name() {
-		return role_name;
+	public String getRolename() {
+		return rolename;
 	}
 
-	public void setRole_name(String role_name) {
-		this.role_name = role_name;
+	public void setRolename(String rolename) {
+		this.rolename = rolename;
 	}
 	
 	

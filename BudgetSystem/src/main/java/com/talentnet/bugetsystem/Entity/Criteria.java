@@ -17,25 +17,25 @@ public class Criteria implements Serializable{
 	@Id
 	@Column(name = "CRITERIA_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer criteria_id;
+	private Integer criteriaid;
 	
 	@Column(name = "CRITERIA_NAME")
-	private String criteria_name;
+	private String criterianame;
 
-	public Integer getCriteria_id() {
-		return criteria_id;
+	public Integer getCriteriaid() {
+		return criteriaid;
 	}
 
-	public void setCriteria_id(Integer criteria_id) {
-		this.criteria_id = criteria_id;
+	public void setCriteriaid(Integer criteriaid) {
+		this.criteriaid = criteriaid;
 	}
 
-	public String getCriteria_name() {
-		return criteria_name;
+	public String getCriterianame() {
+		return criterianame;
 	}
 
-	public void setCriteria_name(String criteria_name) {
-		this.criteria_name = criteria_name;
+	public void setCriterianame(String criterianame) {
+		this.criterianame = criterianame;
 	}
 	
 }

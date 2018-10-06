@@ -19,40 +19,40 @@ public class Bg implements Serializable {
 	@Id
 	@Column(name = "BG_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer bg_id;
+	private Integer bgid;
 	
 	@Column(name = "BG_NAME")
-	private String bg_name;
+	private String bgname;
 	
 	@Column(name = "BG_CODE")
-	private Integer bg_code;
+	private Integer bgcode;
 	
 	@ManyToOne
 	@JoinColumn(name = "WB_ID")
 	private Wb wb;
 
-	public Integer getBg_id() {
-		return bg_id;
+	public Integer getBgid() {
+		return bgid;
 	}
 
-	public void setBg_id(Integer bg_id) {
-		this.bg_id = bg_id;
+	public void setBgid(Integer bgid) {
+		this.bgid = bgid;
 	}
 
-	public String getBg_name() {
-		return bg_name;
+	public String getBgname() {
+		return bgname;
 	}
 
-	public void setBg_name(String bg_name) {
-		this.bg_name = bg_name;
+	public void setBgname(String bgname) {
+		this.bgname = bgname;
 	}
 
-	public Integer getBg_code() {
-		return bg_code;
+	public Integer getBgcode() {
+		return bgcode;
 	}
 
-	public void setBg_code(Integer bg_code) {
-		this.bg_code = bg_code;
+	public void setBgcode(Integer bgcode) {
+		this.bgcode = bgcode;
 	}
 
 	public Wb getWb() {

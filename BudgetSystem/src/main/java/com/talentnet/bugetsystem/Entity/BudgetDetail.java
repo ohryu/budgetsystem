@@ -23,7 +23,7 @@ public class BudgetDetail implements Serializable{
 	@Id
 	@Column(name = "BD_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer bd_id;
+	private Integer bdid;
 	
 	@ManyToOne
 	@JoinColumn(name = "BUDGET_ID")
@@ -42,21 +42,21 @@ public class BudgetDetail implements Serializable{
 	
 	@Column(name = "ALLOCATION_TIME")
 	@Temporal(TemporalType.DATE)
-	private Date allocation_time;
+	private Date allocationtime;
 	
 	@Column(name = "START_TIME")
 	@Temporal(TemporalType.DATE)
-	private Date start_time;
+	private Date starttime;
 	
 	@Column(name = "EXPENSE")
 	private Integer expense;
 
-	public Integer getBd_id() {
-		return bd_id;
+	public Integer getBdid() {
+		return bdid;
 	}
 
-	public void setBd_id(Integer bd_id) {
-		this.bd_id = bd_id;
+	public void setBdid(Integer bdid) {
+		this.bdid = bdid;
 	}
 
 	public Budget getBudget() {
@@ -91,20 +91,20 @@ public class BudgetDetail implements Serializable{
 		this.amount = amount;
 	}
 
-	public Date getAllocation_time() {
-		return allocation_time;
+	public Date getAllocationtime() {
+		return allocationtime;
 	}
 
-	public void setAllocation_time(Date allocation_time) {
-		this.allocation_time = allocation_time;
+	public void setAllocationtime(Date allocationtime) {
+		this.allocationtime = allocationtime;
 	}
 
-	public Date getStart_time() {
-		return start_time;
+	public Date getStarttime() {
+		return starttime;
 	}
 
-	public void setStart_time(Date start_time) {
-		this.start_time = start_time;
+	public void setStarttime(Date starttime) {
+		this.starttime = starttime;
 	}
 
 	public Integer getExpense() {

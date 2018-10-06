@@ -19,29 +19,29 @@ public class Group implements Serializable{
 	@Id
 	@Column(name = "GROUP_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer group_id;
+	private Integer groupid;
 	
 	@Column(name = "GROUP_CODE")
-	private String group_code;
+	private String groupcode;
 	
 	@ManyToOne
 	@JoinColumn(name = "COMPANY_ID")
 	private Company company;
 
-	public Integer getGroup_id() {
-		return group_id;
+	public Integer getGroupid() {
+		return groupid;
 	}
 
-	public void setGroup_id(Integer group_id) {
-		this.group_id = group_id;
+	public void setGroupid(Integer groupid) {
+		this.groupid = groupid;
 	}
 
-	public String getGroup_code() {
-		return group_code;
+	public String getGroupcode() {
+		return groupcode;
 	}
 
-	public void setGroup_code(String group_code) {
-		this.group_code = group_code;
+	public void setGroupcode(String groupcode) {
+		this.groupcode = groupcode;
 	}
 
 	public Company getCompany() {
