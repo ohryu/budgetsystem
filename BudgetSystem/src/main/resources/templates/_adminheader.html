@@ -16,10 +16,9 @@
 <script
 	src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
 <!-- END link bootstrap + font awesome -->
-<link rel="stylesheet" href="../resources/css/adminCss2.css"
+<link rel="stylesheet" href="/resources/css/adminCss2.css"
 	type="text/css" />
 <script src="https://unpkg.com/sweetalert2@7.17.0/dist/sweetalert2.all.js"></script>
-<script src="/resources/js/jquery.twbsPagination.min.js"></script>
 <script src="/resources/core/jquery.autocomplete.min.js" /></script>
 <link href="/resources/core/main.css" rel="stylesheet">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -35,9 +34,6 @@
 <link
 	href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
 	rel="stylesheet" type="text/css" />
-
-<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-<script src="/resources/js/statistic.js"></script>
 </head>
 <body>
 	<nav class="navbar navbar-inverse">
@@ -59,10 +55,7 @@
 
 					<li th:switch="${userInfo[1]}" id="summary">
 						<a th:case="'ROLE_ADMIN'" href="/admin/summary" aria-expanded="false"> <i class="glyphicon glyphicon-book"></i>Summary</a>
-					</li>
-					<li th:switch="${userInfo[1]}" id="dept">
-						<a th:case="'ROLE_ADMIN'" href="/admin/dept" aria-expanded="false"><i class="glyphicon glyphicon-tag"></i> Dept</a>
-						<a th:case="'ROLE_USER'" href="/user/dept"  aria-expanded="false"><i class="glyphicon glyphicon-tag"></i> Dept</a>
+						<a th:case="'ROLE_USER'" href="/user/summary" aria-expanded="false"> <i class="glyphicon glyphicon-book"></i>Summary</a>
 					</li>
 					<li th:switch="${userInfo[1]}" id="historical-amoumt">
 						<a th:case="'ROLE_ADMIN'" href="/admin/histoticalamount" aria-expanded="false"> <i class="glyphicon glyphicon-file"></i>Historical Amount</a>

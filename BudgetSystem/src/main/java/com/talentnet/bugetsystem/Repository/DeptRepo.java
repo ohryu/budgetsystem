@@ -11,4 +11,7 @@ import com.talentnet.bugetsystem.Entity.Group;
 @Repository
 public interface DeptRepo extends JpaRepository<Dept, Integer>{
 	List<Dept> findByGroupAndControl(Group group, boolean control);
+	List<Dept> findByGroupAndSponsor(Group group, boolean sponsor);
+	List<Dept> findByControl(boolean control);
+	Dept findByDeptid(Integer deptid);
 }

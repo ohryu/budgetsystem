@@ -19,12 +19,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.talentnet.bugetsystem.Utils.WebUtils;
 import com.talentnet.bugetsystem.Entity.BUser;
 import com.talentnet.bugetsystem.Entity.BudgetLine;
+import com.talentnet.bugetsystem.Entity.Company;
 import com.talentnet.bugetsystem.Entity.Dept;
+import com.talentnet.bugetsystem.Entity.Group;
 import com.talentnet.bugetsystem.Entity.Role;
 import com.talentnet.bugetsystem.Entity.UserRole;
 import com.talentnet.bugetsystem.Entity.Wb;
 import com.talentnet.bugetsystem.Repository.BudgetlineRepo;
+import com.talentnet.bugetsystem.Repository.CompanyRepo;
 import com.talentnet.bugetsystem.Repository.DeptRepo;
+import com.talentnet.bugetsystem.Repository.GroupRepo;
 import com.talentnet.bugetsystem.Repository.RoleRepo;
 import com.talentnet.bugetsystem.Repository.SystemroleRepo;
 import com.talentnet.bugetsystem.Repository.UserRepo;
@@ -41,22 +45,17 @@ public class MainController {
 	@Autowired BudgetlineRepo blRep;
 	@Autowired SystemroleRepo sysroleRepo;
 	@Autowired DeptRepo deptRepo;
+	@Autowired GroupRepo groupRepo;
+	@Autowired CompanyRepo companyRepo;
 	
 
 	@RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
 	public String loginPage(Model model) {
-		/*BUser user = new BUser();
-		user.setUsername("luu@gmail.com");
-		user.setPassword(passwordEncoder.encode("123"));
-		user.setRole(roleRepo.findByRoleid(2));
-		user.setFullname("Luu Repo");
-		user.setActive(true);
-		userRepo.save(user);*/
 		return "login";
 	}
 	
-	/*@RequestMapping(value = "/user/dept", method = RequestMethod.GET)
-	public String userHome(Model model, Principal principal) {
+	@RequestMapping(value = "/user/summary", method = RequestMethod.GET)
+	public String usersummary(Model model, Principal principal) {
 		String userName = principal.getName();
 		System.out.println("User Name: " + userName);
 		List<String> userInfo = new ArrayList<>();
@@ -64,25 +63,17 @@ public class MainController {
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		model.addAttribute("userInfo", userInfo);
 		List<UserRole> userrole = userroleRepo.findByUser(userRepo.findByUsername(principal.getName()));
-		List<List<String>> reviewer = new ArrayList<>();
-		List<List<String>> reporter = new ArrayList<>();
+		boolean isReviewer = false;
+		boolean isReporter = false;
 		for(UserRole urole : userrole) {
-			List<String> ur = new ArrayList<>();
-			if(urole.getGroup()!=null) {
-				ur.add(urole.getGroup().getCompany().getCompany_name());
-				ur.add(urole.getGroup().getCompany().getCompany_id().toString());
-				reviewer.add(ur);
-			}else {
-				ur.add(urole.getDept().getGroup().getCompany().getCompany_name());
-				ur.add(urole.getDept().getDept_name());
-				ur.add(urole.getDept().getDept_id().toString());
-				reporter.add(ur);
-			}
+			if(urole.getDept()!=null) isReporter = true;
+			if(urole.getGroup()!=null) isReviewer = true;
+			if(isReporter && isReviewer) break;
 		}
-		model.addAttribute("reviewer", reviewer);
-		model.addAttribute("reporter", reporter);
-		return "user_dept";
-	}*/
+		if(!isReporter) return "redirect:/user/summary/review";
+		else if(!isReviewer) return "redirect:/user/summary/report";
+		else return "select_role";
+	}
 	
 	@RequestMapping(value = "/admin/summary", method = RequestMethod.GET)
 	public String adminHome(Model model, Principal principal) {
@@ -91,7 +82,21 @@ public class MainController {
 		List<String> userInfo = new ArrayList<>();
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
+		userInfo.add("NOT");
 		model.addAttribute("userInfo", userInfo);
+		List<List<List<Dept>>> companydept = new ArrayList<>();
+		List<List<Dept>> groupdept = new ArrayList<>();
+		List<Company> companies = companyRepo.findAll();
+		for(Company company : companies) {
+			List<Group> groups = groupRepo.findByCompany(company);
+			for(Group group : groups) {
+				List<Dept> depts = deptRepo.findByGroupAndControl(group, true);
+				groupdept.add(depts);
+			}
+			companydept.add(groupdept);
+		}
+		
+		model.addAttribute("companydepts", companydept);
 		return "summary";
 	}
 	
@@ -115,8 +120,28 @@ public class MainController {
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		userInfo.add("REPORTER");
 		model.addAttribute("userInfo", userInfo);
+		List<List<List<Dept>>> companydept = new ArrayList<>();
 		List<UserRole> userrole = userroleRepo.findByUserAndSysrole(userRepo.findByUsername(principal.getName()), sysroleRepo.findByRoleid(2));
-		model.addAttribute("roles", userrole);
+		List<Company> companies = new ArrayList<>();
+		List<Group> groups = new ArrayList<>();
+		for(UserRole ur : userrole) {
+			if(!companies.contains(ur.getDept().getGroup().getCompany())) companies.add(ur.getDept().getGroup().getCompany());
+			if(!groups.contains(ur.getDept().getGroup())) groups.add(ur.getDept().getGroup());
+		}
+		for(Company company : companies) {
+			List<List<Dept>> groupdept = new ArrayList<>();
+			for(Group group : groups) {
+				List<Dept> dept = new ArrayList<>();
+				for(UserRole ur : userrole) {
+					if(ur.getDept().getGroup()==group) {
+						dept.add(ur.getDept());
+					}
+				}
+				groupdept.add(dept);
+			}
+			companydept.add(groupdept);
+		}
+		model.addAttribute("companydepts", companydept);
 		return "summary";
 	}
 	
@@ -129,14 +154,22 @@ public class MainController {
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		userInfo.add("REVIEWER");
 		model.addAttribute("userInfo", userInfo);
-		List<Dept> depts = new ArrayList<>();
-		List<List<Dept>> groups = new ArrayList<>();
+		List<List<List<Dept>>> companydept = new ArrayList<>();
 		List<UserRole> userrole = userroleRepo.findByUserAndSysrole(userRepo.findByUsername(principal.getName()), sysroleRepo.findByRoleid(1));
+		List<Company> companies = new ArrayList<>();	
 		for(UserRole ur : userrole) {
-			depts = deptRepo.findByGroupAndControl(ur.getGroup(), true);
-			groups.add(depts);
+			if(!companies.contains(ur.getGroup().getCompany())) companies.add(ur.getGroup().getCompany());
 		}
-		model.addAttribute("roles", groups);
+		for(Company company : companies) {
+			List<List<Dept>> groupdept = new ArrayList<>();
+			for(UserRole ur : userrole) {
+				if(ur.getGroup().getCompany()==company) {
+					groupdept.add(deptRepo.findByGroupAndControl(ur.getGroup(), true));
+				}
+			}
+			companydept.add(groupdept);
+		}
+		model.addAttribute("companydepts", companydept);
 		return "summary";
 	}
 	

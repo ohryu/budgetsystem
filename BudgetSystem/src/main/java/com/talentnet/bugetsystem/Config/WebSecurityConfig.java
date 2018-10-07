@@ -51,7 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable();
 
 		// Các trang không yêu cầu login
-		http.authorizeRequests().antMatchers("/", "/login", "/logout","/resources/**", "/views**", "/app/**").permitAll();
+		http.authorizeRequests().antMatchers("/", "/login", "/logout","/resources/**", "/views**","/service/", "/app/**").permitAll();
 
 		// Trang /userInfo yêu cầu phải login với vai trò ROLE_USER hoặc ROLE_ADMIN.
 		// Nếu chưa login, nó sẽ redirect tới trang /login.
@@ -79,7 +79,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						authorities.forEach(authority -> {
 							if (authority.getAuthority().equals("ROLE_USER")) {
 								try {
-									response.sendRedirect("/user/dept");
+									response.sendRedirect("/user/summary");
 								} catch (Exception e) {
 									e.printStackTrace();
 								}

@@ -12,4 +12,5 @@ import com.talentnet.bugetsystem.Entity.UserRole;
 @Repository
 public interface UserroleRepo extends JpaRepository<UserRole, Integer>{
 	List<UserRole> findByUserAndSysrole(BUser user, SystemRole sysrole);
+	List<UserRole> findByUser(BUser user);
 }

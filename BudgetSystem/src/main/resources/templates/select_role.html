@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<th:block th:include="_adminheader"></th:block>
+	<div class="container">
+		<h2>Please select role</h2>
+		<a href="/user/summary/review" class="btn btn-info btn-lg" role="button">Reviewer</a>
+		<a href="/user/summary/report" class="btn btn-info" role="button">Reporter</a>
+	</div>
+</body>
+</html>
