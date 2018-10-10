@@ -26,7 +26,7 @@ public class Budget implements Serializable{
 	private Dept dept;
 	
 	@Column(name = "STATUS")
-	private boolean status;
+	private Integer status;
 
 	public Integer getBudgetid() {
 		return budgetid;
@@ -44,11 +44,11 @@ public class Budget implements Serializable{
 		this.dept = dept;
 	}
 
-	public boolean isStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(boolean status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 	

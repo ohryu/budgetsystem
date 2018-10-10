@@ -6,15 +6,20 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.talentnet.bugetsystem.Entity.Bg;
 import com.talentnet.bugetsystem.Entity.Budget;
 import com.talentnet.bugetsystem.Entity.BudgetDetail;
+import com.talentnet.bugetsystem.Entity.BudgetForm;
 import com.talentnet.bugetsystem.Entity.BudgetLine;
 import com.talentnet.bugetsystem.Entity.Dept;
 import com.talentnet.bugetsystem.Entity.Group;
 import com.talentnet.bugetsystem.Entity.Wb;
+import com.talentnet.bugetsystem.Repository.BgRepo;
 import com.talentnet.bugetsystem.Repository.BudgetDetailRepo;
 import com.talentnet.bugetsystem.Repository.BudgetRepo;
 import com.talentnet.bugetsystem.Repository.BudgetlineRepo;
@@ -31,17 +36,18 @@ public class RestController {
 	@Autowired RoleRepo roleRepo;
 	@Autowired UserroleRepo userroleRepo;
 	@Autowired PasswordEncoder passwordEncoder;
-	@Autowired WbRepo wbRep;
+	@Autowired WbRepo wbRepo;
 	@Autowired BudgetlineRepo blRepo;
 	@Autowired BudgetRepo budgetRepo;
 	@Autowired BudgetDetailRepo bdRepo;
 	@Autowired DeptRepo deptRepo;
 	@Autowired GroupRepo groupRepo;
+	@Autowired BgRepo bgRepo;
 	
 	@RequestMapping(value = "/service/getwbbybl/{bline}", method = RequestMethod.GET)
 	public List<Wb> getWbByBl(@PathVariable("bline") int bline) {
 		BudgetLine bl = blRepo.findByBlid(bline);
-		return wbRep.findByBline(bl);
+		return wbRepo.findByBline(bl);
 	}
 	
 	@RequestMapping(value = "/service/summarybydept/{dept}", method = RequestMethod.GET)
@@ -67,4 +73,67 @@ public class RestController {
 		}
 		return sponsor;
 	}
+	
+	@RequestMapping(value = "/service/bgbywb/{wb}", method = RequestMethod.GET)
+	public List<Bg> getBgByWb(@PathVariable("wb") int wbid){
+		return bgRepo.findByWb(wbRepo.findByWbid(wbid));
+	}
+	
+	@RequestMapping(value = "/service/getallwb", method = RequestMethod.GET)
+	public List<Wb> getAllWb(){
+		return wbRepo.findAll();
+	}
+	
+	@RequestMapping(value = "/service/getallbg", method = RequestMethod.GET)
+	public List<Bg> getAllBg(){
+		return bgRepo.findAll();
+	}
+	
+	@RequestMapping(value="/service/savebudget", method = RequestMethod.POST)
+	public String postbudget(@RequestBody List<BudgetForm> budgets){
+		if(budgetRepo.findByDept(deptRepo.findByDeptid(budgets.get(0).getCdept()))==null){
+			Budget bg = new Budget();
+			bg.setDept(deptRepo.findByDeptid(budgets.get(0).getCdept()));
+			bg.setStatus(0);
+			budgetRepo.save(bg);
+		}else {
+			List<BudgetDetail> bdList= bdRepo.findByBudget(budgetRepo.findByDept(deptRepo.findByDeptid(budgets.get(0).getCdept())));
+			for(BudgetDetail bd : bdList) {
+				int del = 1;
+				for(BudgetForm budget : budgets) {
+					if(budget.getId()!=null) {
+						if(bd.getBdid() == Integer.parseInt(budget.getId()))  {
+							del = 0;
+							break;
+						}
+					}	
+				}
+				if(del ==1) {
+					bdRepo.delete(bd);
+				}
+			}
+		}
+		List<BudgetDetail> saveList = new ArrayList<>(); 
+		for(BudgetForm budget : budgets) {
+			BudgetDetail bgd = new BudgetDetail();
+			if(budget.getId()!=null) {
+				bgd.setBdid(Integer.parseInt(budget.getId()));
+			}
+			bgd.setBudget(budgetRepo.findByDept(deptRepo.findByDeptid(budget.getCdept())));
+			bgd.setDept(deptRepo.findByDeptid(budget.getSdept()));
+			bgd.setBline(blRepo.findByBlid(budget.getBline()));
+			bgd.setAmount(budget.getAmount());
+			bgd.setExpense(budget.getExpense());
+			bgd.setAllocationtime(budget.getAllocate());
+			bgd.setStarttime(budget.getStart());
+			if(budget.getWb().equals("NEW")) {
+				bgd.setNewdetail(budget.getBg());
+			}else {
+				bgd.setBg(bgRepo.findByBgid(Integer.parseInt(budget.getBg())));
+			}
+			saveList.add(bgd);
+		}
+		bdRepo.saveAll(saveList);
+		return "Post Successfully!";
+		}
 }

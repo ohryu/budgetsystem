@@ -172,6 +172,19 @@ public class MainController {
 		model.addAttribute("companydepts", companydept);
 		return "summary";
 	}
+	@RequestMapping(value = "/admin/account", method = RequestMethod.GET)
+	public String accountManage(Model model, Principal principal) {
+		String userName = principal.getName();
+		System.out.println("User Name: " + userName);
+		List<String> userInfo = new ArrayList<>();
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
+		model.addAttribute("userInfo", userInfo);
+		List<UserRole> accounts = userroleRepo.findAll();
+		model.addAttribute("accounts", accounts);
+		return "account";
+		
+	}
 	
 	@RequestMapping(value = "/403", method = RequestMethod.GET)
 	public String accessDenied(Model model, Principal principal) {

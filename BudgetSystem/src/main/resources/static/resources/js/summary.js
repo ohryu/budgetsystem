@@ -1,71 +1,83 @@
 $(document).ready(function() {
+	var group;
+	var detail;
+	$.ajax({
+		type : "GET",
+		url : "/service/getallwb",
+		success : function(data){
+			group = data;
+		},
+		error : function(e) {
+			console.log("ERROR : ", e);
+		}
+	});
+	$.ajax({
+		type : "GET",
+		url : "/service/getallbg",
+		success : function(data){
+			detail = data;
+		},
+		error : function(e) {
+			console.log("ERROR : ", e);
+		}
+	});
+//add budget
 	$("body").off("click", "#add-budget").on("click", "#add-budget", function(){
+		//get wb
 		$.ajax({
 			type : "GET",
 			url : '/service/getwbbybl/' + $('#bg-line').val(),
 			success : function(data) {
-				tool = 0;
 				if($("#all").prop('checked') == true){
 					$(".sponsor").each(function (){
-						tool++;
 						row = '<tr class="budget-row">\
 						  			<td class="control-dept" data-dept-id="'+$("#c-dept").attr("data-dept-id")+'">FAD</td>\
 						  			<td class="sponsor-dept" data-dept-id="'+$(this).val()+'">'+$(this).attr("name")+'</td>\
-						  			<td class="bl">'+$('#bg-line').val()+'</td>\
+						  			<td class="bl" data-bl-id="'+$('#bg-line').val()+'">'+$('#bg-line option:selected').text()+'</td>\
 						  			<td>\
-						  				<select class="wb">';
-						 $.each(data, function(key, val){
-							 row+='<option value="'+val.wbid+'">'+val.wbname+'</option>'
-						 }) 					
+						  				<select class="wb">\
+											<option value="NEW">NEW</option>';
+									$.each(data, function(key, val){
+									  row+='<option value="'+val.wbid+'">'+val.wbname+'</option>'
+									}) 					
 						 
-						 row+=' 		</select>\
+									row+='</select>\
 						  			</td>\
-						  			<td><input type="text" name="" size="10"></td>\
-						  			<td><input type="text" name="" size="10"></td>\
-						  			<td><input type="text" name="" size="10"></td>\
-						  			<td><input type="date" name="" size="10"></td>\
-						  			<td><input type="date" name="" size="10"></td>\
-						  			<td><input type="text" name="" size="10"></td>\
-						  			<td><input type="button" name="" value="Delete"></td>';
-						if(tool==1) row+='<td class="tool" rowspan="'+$('.sponsor').length+'">\
-						  				<input type="radio" name="tool">Utilize historical amount<br>\
-						  				<input type="text" name="" placeholder="% add in" size="10"><br>\
-						  				<input type="radio" name="tool"> Cost driver <br>\
-						  				<input type="text" name="" placeholder="Cost allocation" size="10">\
-						  			</td>';				
+							 		<td><input type="text" class="bg" size="10"></td>\
+						  			<td><input disabled type="text" class="code" size="10"></td>\
+						  			<td><input type="text" class="bg-amount" size="10"></td>\
+						  			<td><input type="date" class="time-allocate" size="10"></td>\
+						  			<td><input type="date" class="start-time" size="10"></td>\
+						  			<td><input type="text" class="expense" size="10"></td>\
+						  			<td><input type="button" class="delete-btn" name="" value="Delete"></td>\
+							 		<td><input type="checkbox" class=usetool></td>';		
 						row+='</tr>';
-						$(".summary table").append(row);
+						$(".summary table tbody").append(row);
 					});
 				}else{
 					$(".sponsor:checked").each(function(){
-						tool++;
 						row = '<tr class="budget-row">\
 						  			<td class="control-dept" data-dept-id="'+$("#c-dept").attr("data-dept-id")+'">FAD</td>\
 						  			<td class="sponsor-dept" data-dept-id="'+$(this).val()+'">'+$(this).attr("name")+'</td>\
-						  			<td class="bl">'+$("#bg-line").val()+'</td>\
+						  			<td class="bl" data-bl-id="'+$('#bg-line').val()+'">'+$('#bg-line option:selected').text()+'</td>\
 						  			<td>\
-						  				<select class="wb">';
-						 $.each(data, function(key, val){
-							 row+='<option value="'+val.wbid+'">'+val.wbname+'</option>'
-						 }) 					
-						 
-						 row+=' 		</select>\
+						  				<select class="wb">\
+					  						<option value="NEW">NEW</option>';
+						 			$.each(data, function(key, val){
+							 		  row+='<option value="'+val.wbid+'">'+val.wbname+'</option>'
+						 			}) 					
+						 			row+='</select>\
 						  			</td>\
-						  			<td><input type="text" name="" size="10"></td>\
-						  			<td><input type="text" name="" size="10"></td>\
-						  			<td><input type="text" name="" size="10"></td>\
-						  			<td><input type="date" name="" size="10"></td>\
-						  			<td><input type="date" name="" size="10"></td>\
-						  			<td><input type="text" name="" size="10"></td>\
-						  			<td><input type="button" name="" value="Delete"></td>';
-						if(tool==1) row+='<td class="tool" rowspan="'+$(".sponsor").filter(':checked').length+'">\
-						  				<input type="radio" name="tool">Utilize historical amount<br>\
-						  				<input type="text" name="" placeholder="% add in" size="10"><br>\
-						  				<input type="radio" name="tool"> Cost driver <br>\
-						  				<input type="text" name="" placeholder="Cost allocation" size="10">\
-						  			</td>';				
+						 			<td><input type="text" class="bg" size="10"></td>\
+							  		<td><input disabled type="text" class="code" size="10"></td>\
+							  		<td><input type="text" class="bg-amount" size="10"></td>\
+							  		<td><input type="date" class="time-allocate" size="10"></td>\
+							  		<td><input type="date" class="start-time" size="10"></td>\
+							  		<td><input type="text" class="expense" size="10"></td>\
+							  		<td><input type="button" class="delete-btn" name="" value="Delete"></td>\
+								 	<td><input type="checkbox" class=usetool></td>';		
 						row+='</tr>';
-						$(".summary table").append(row);
+						$(".summary table tbody").append(row);
 					});
 				}
 			},
@@ -74,25 +86,82 @@ $(document).ready(function() {
 			}
 		});	
 	});
+	
+//side bar
 	$("body").off("click", "#menu").on("click", "#menu", function(){
 		document.getElementById("mySidebar").style.display = "block";
-	})
+	});
     $("body").off("click", "#close").on("click", "#close", function(){
     	document.getElementById("mySidebar").style.display = "none";
-    })
+    });
+    
+//select dept
     $("body").off("click", ".dept").on("click", ".dept", function(){
+    	$("tbody").empty();
     	$("#c-dept").attr("data-dept-id",$(this).attr("data-dept-id"));
 		$("#c-dept").text($(this).text());
+		//get budget in DB
     	$.ajax({
     		type : "GET",
 			url : '/service/summarybydept/' + $(this).attr("data-dept-id"),
 			success : function(data) {
-				
+				$.each(data, function(key, val){
+					row = '<tr class="budget-row" data-bd-id="'+val.bdid+'">\
+			  			<td class="control-dept" data-dept-id="'+val.budget.dept.deptid+'">'+val.budget.dept.deptname+'</td>\
+			  			<td class="sponsor-dept" data-dept-id="'+val.dept.deptid+'">'+val.dept.deptname+'</td>\
+			  			<td class="bl" data-bl-id="'+val.bline.blid+'" data-bl-name='+val.bline.blname+'">'+val.bline.blname+'</td>\
+			  			<td><select class="wb">';
+					row+='<option value="NEW" selected>NEW</option>';
+			  		if(val.bg==null){
+			  			$.each(group, function(key1, val1){
+							if(val1.bline.blid == val.bline.blid)
+								row+='<option value="'+val1.wbid+'">'+val1.wbname+'</option>'
+						});
+			  		}else{
+						$.each(group, function(key1, val1){
+							if(val1.bline.blid == val.bline.blid){
+								if(val1.wbid == val.bg.wb.wbid){
+									row+='<option value="'+val1.wbid+'" selected>'+val1.wbname+'</option>';
+								}
+								else{
+									row+='<option value="'+val1.wbid+'">'+val1.wbname+'</option>'
+								}
+							}
+						});
+			  		}
+					row+='</select></td>';
+			 		row+='<td>';
+					if(val.bg==null){
+						row+='<input type="text" class="bg" value="'+val.newdetail+'"></td>'
+						row+='<td><input disabled type="text" class="code" size="10" value="'+val.budget.dept.deptcode+'-'+val.dept.deptcode+'-NEW"></td>';
+					}
+					else{
+						row+='<select class="bg">';
+						$.each(detail, function(key1, val1){
+							if(val.bg.bgid==val1.bgid){
+								row+='<option value="'+val1.bgid+'" selected>'+val1.bgname+'</option>'
+							}else{
+								row+='<option value="'+val1.bgid+'">'+val1.bgname+'</option>'
+							}
+						});
+						row+='<td><input disabled type="text" class="code" size="10" value="'+val.budget.dept.deptcode+'-'+val.dept.deptcode+'-'+val.bg.wb.wbcode+'-'+val.bg.bgcode+'"></td>';
+					}
+					row+='\
+				  		<td><input type="text" class="bg-amount" size="10" value="'+val.amount+'"></td>\
+				  		<td><input type="date" class="time-allocate" size="10" value="'+val.allocationtime+'"></td>\
+				  		<td><input type="date" class="start-time" size="10" value="'+val.starttime+'"></td>\
+				  		<td><input type="text" class="expense" size="10" value="'+val.expense+'"></td>\
+				  		<td><input type="button" class="delete-btn" name="" value="Delete"></td>\
+					 	<td><input type="checkbox" class=usetool></td>';		
+			 		row+='</tr>';
+			 		$("tbody").append(row);
+				});
 			},
 			error : function(e) {
 				console.log("ERROR : ", e);
 			}
     	});
+    	//get budget line
     	$.ajax({
     		type : "GET",
 			url : '/service/budgetlinebydept/' + $(this).attr("data-dept-id"),
@@ -106,6 +175,7 @@ $(document).ready(function() {
 				console.log("ERROR : ", e);
 			}
     	});
+    	//get sponsor
     	$.ajax({
     		type : "GET",
 			url : '/service/sponsorbydept/' + $(this).attr("data-dept-id"),
@@ -127,5 +197,74 @@ $(document).ready(function() {
     	});
     	$("#close").click();
     });
+//click first dept
     $("div a.dept").first().trigger("click");
+//delete row
+    $("body").off("click", ".delete-btn").on("click", ".delete-btn", function(){
+    	 $(this).closest("tr").remove();
+    });
+//get bg by wb
+    $("body").on("change", "select.wb", function(){
+    	var nexttd = $(this).closest("td").next();
+    	if($(this).val()=="NEW"){
+    		nexttd.empty();
+    		nexttd.append('<input type="text" class="bg" size="10">');
+    		nexttd.next().find("input").val($("#c-dept").text()+"-"+$("#s-dept").text+"NEW");
+    	}else{
+    		$.ajax({
+        		type : "GET",
+    			url : '/service/bgbywb/' + $(this).val(),
+    			success : function(data) {
+    				nexttd.empty();
+    				dropdown = '<select class="bg">';
+    				$.each(data, function(key, val){
+    					dropdown+='<option value="'+val.bgid+'">'+val.bgname+'</option>';
+    				});
+    				dropdown+=('</select>');
+    				nexttd.append(dropdown);
+    			},
+    			error : function(e) {
+    				console.log("ERROR : ", e);
+    			}
+        	});
+    	}
+    });
+    $("body").on("change", "select.wb", function(){
+    	if($(this).closest("td").prev().val()=="NEW"){
+    		$(this).closest("td").next().find("input").val($("#c-dept").text()+"-"+$("#s-dept").text+"NEW");
+    	}
+    	
+    });
+    $("body").off("click", "#save").on("click", "#save", function(){
+    	var budgetList = [];
+    	$("tbody tr.budget-row").each(function(){
+    		var row = $(this);
+    		var budget={
+    				id : row.attr("data-bd-id"),
+    				cdept : $("#c-dept").attr("data-dept-id"),
+    				sdept : row.find("td.sponsor-dept").attr("data-dept-id"),
+    				bline : row.find("td.bl").attr("data-bl-id"),
+    				wb : row.find(".wb").val(),
+    				bg : row.find(".bg").val(),
+    				amount : row.find(".bg-amount").val(),
+    				allocate : row.find(".time-allocate").val(),
+    				start : row.find(".start-time").val(),
+    				expense : row.find(".expense").val()	
+    		}
+    		budgetList.push(budget);
+    	});
+    	$.ajax({
+    		type : "POST",
+    		url : "/service/savebudget",
+    		contentType : "application/json",
+    		data: JSON.stringify(budgetList),
+			accept: 'text/plain',
+			success : function(data){
+				console.log(data);
+			},
+			error: function(e){
+				console.log("ERROR : ", e);
+			}
+    	});
+    });
 })

@@ -37,6 +37,18 @@ public class BudgetDetail implements Serializable{
 	@JoinColumn(name = "BG_ID")
 	private Bg bg;
 	
+	@ManyToOne
+	@JoinColumn(name = "BL_ID")
+	private BudgetLine bline;
+	
+	public BudgetLine getBline() {
+		return bline;
+	}
+
+	public void setBline(BudgetLine bline) {
+		this.bline = bline;
+	}
+
 	@Column(name = "AMOUNT")
 	private Integer amount;
 	
@@ -50,6 +62,17 @@ public class BudgetDetail implements Serializable{
 	
 	@Column(name = "EXPENSE")
 	private Integer expense;
+
+	@Column(name = "NEW")
+	private String newdetail;
+	
+	public String getNewdetail() {
+		return newdetail;
+	}
+
+	public void setNewdetail(String newdetail) {
+		this.newdetail = newdetail;
+	}
 
 	public Integer getBdid() {
 		return bdid;
