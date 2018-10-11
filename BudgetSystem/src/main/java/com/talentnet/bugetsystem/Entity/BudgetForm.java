@@ -13,6 +13,7 @@ public class BudgetForm {
 	private Date allocate;
 	private Date start;
 	private int expense;
+	private String role;
 	
 	
 	public String getId() {
@@ -20,6 +21,13 @@ public class BudgetForm {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
 	}
 	public int getCdept() {
 		return cdept;

@@ -94,7 +94,9 @@ public class RestController {
 		if(budgetRepo.findByDept(deptRepo.findByDeptid(budgets.get(0).getCdept()))==null){
 			Budget bg = new Budget();
 			bg.setDept(deptRepo.findByDeptid(budgets.get(0).getCdept()));
-			bg.setStatus(0);
+			if(budgets.get(0).getRole().equals("REPORTER")) bg.setStatus(0);
+			if(budgets.get(0).getRole().equals("REVIEWER")) bg.setStatus(1);
+			else bg.setStatus(2);
 			budgetRepo.save(bg);
 		}else {
 			List<BudgetDetail> bdList= bdRepo.findByBudget(budgetRepo.findByDept(deptRepo.findByDeptid(budgets.get(0).getCdept())));
@@ -134,6 +136,34 @@ public class RestController {
 			saveList.add(bgd);
 		}
 		bdRepo.saveAll(saveList);
-		return "Post Successfully!";
+		return "Saved!";
+	}
+	
+	@RequestMapping(value="/service/submitbudget", method = RequestMethod.POST)
+	public String submitbudget(@RequestBody BudgetForm budget){
+		if(budget.getRole().equals("REPORTER")) {
+			Budget bud = budgetRepo.findByDept(deptRepo.findByDeptid(budget.getSdept()));
+			bud.setStatus(1);
+			budgetRepo.save(bud);
+		}else if(budget.getRole().equals("REVIEWER")) {
+			Budget bud = budgetRepo.findByDept(deptRepo.findByDeptid(budget.getSdept()));
+			bud.setStatus(2);
+			budgetRepo.save(bud);
 		}
+		return "Submitted!";
+	}
+	
+	@RequestMapping(value="/service/rejectbudget", method = RequestMethod.POST)
+	public String rejectbudget(@RequestBody BudgetForm budget){
+		if(budget.getRole().equals("NOT")) {
+			Budget bud = budgetRepo.findByDept(deptRepo.findByDeptid(budget.getSdept()));
+			bud.setStatus(1);
+			budgetRepo.save(bud);
+		}else if(budget.getRole().equals("REVIEWER")) {
+			Budget bud = budgetRepo.findByDept(deptRepo.findByDeptid(budget.getSdept()));
+			bud.setStatus(0);
+			budgetRepo.save(bud);
+		}
+		return "Rejected!";
+	}
 }

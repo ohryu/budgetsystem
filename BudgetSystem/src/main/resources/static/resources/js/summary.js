@@ -21,7 +21,16 @@ $(document).ready(function() {
 			console.log("ERROR : ", e);
 		}
 	});
-//add budget
+	
+//reporter does not have reject btn and admin not have submit btn-----------------------------------------------------------------------
+	if($("#sysrole").val()=="REPORTER"){
+		$("#reject").hide();
+	}
+	if($("#sysrole").val()=="NOT"){
+		$("#submit").hide();
+	}
+	
+//add budget----------------------------------------------------------------------------------------------------------------------------
 	$("body").off("click", "#add-budget").on("click", "#add-budget", function(){
 		//get wb
 		$.ajax({
@@ -87,7 +96,7 @@ $(document).ready(function() {
 		});	
 	});
 	
-//side bar
+//side bar---------------------------------------------------------------------------------------------------------
 	$("body").off("click", "#menu").on("click", "#menu", function(){
 		document.getElementById("mySidebar").style.display = "block";
 	});
@@ -95,7 +104,7 @@ $(document).ready(function() {
     	document.getElementById("mySidebar").style.display = "none";
     });
     
-//select dept
+//select dept-------------------------------------------------------------------------------------------------------
     $("body").off("click", ".dept").on("click", ".dept", function(){
     	$("tbody").empty();
     	$("#c-dept").attr("data-dept-id",$(this).attr("data-dept-id"));
@@ -133,7 +142,7 @@ $(document).ready(function() {
 			 		row+='<td>';
 					if(val.bg==null){
 						row+='<input type="text" class="bg" value="'+val.newdetail+'"></td>'
-						row+='<td><input disabled type="text" class="code" size="10" value="'+val.budget.dept.deptcode+'-'+val.dept.deptcode+'-NEW"></td>';
+						row+='<td>'+val.budget.dept.deptcode+'-'+val.dept.deptcode+'-NEW</td>';
 					}
 					else{
 						row+='<select class="bg">';
@@ -144,7 +153,7 @@ $(document).ready(function() {
 								row+='<option value="'+val1.bgid+'">'+val1.bgname+'</option>'
 							}
 						});
-						row+='<td><input disabled type="text" class="code" size="10" value="'+val.budget.dept.deptcode+'-'+val.dept.deptcode+'-'+val.bg.wb.wbcode+'-'+val.bg.bgcode+'"></td>';
+						row+='<td>'+val.budget.dept.deptcode+'-'+val.dept.deptcode+'-'+val.bg.wb.wbcode+'-'+val.bg.bgcode+'</td>';
 					}
 					row+='\
 				  		<td><input type="text" class="bg-amount" size="10" value="'+val.amount+'"></td>\
@@ -156,12 +165,21 @@ $(document).ready(function() {
 			 		row+='</tr>';
 			 		$("tbody").append(row);
 				});
+				if(($("#sysrole").val()=="REPORTER" && data[0].budget.status!=0) || ($("#sysrole").val()=="REVIEWER" && data[0].budget.status!=1) || ($("#sysrole").val()=="NOT" && data[0].budget.status!=2)){
+					$("#add-btn").attr('disabled', 'disabled');
+					$("#submit-tool").attr('disabled', 'disabled');
+					$("#edit").attr('disabled', 'disabled');
+					$("#save").attr('disabled', 'disabled');
+					$("#submit").attr('disabled', 'disabled');
+					$("#reject").attr('disabled', 'disaled');
+				}
+				$("tbody tr input, select, #add-btn, #save, #submit-tool").attr('disabled', 'disaled');
 			},
 			error : function(e) {
 				console.log("ERROR : ", e);
 			}
     	});
-    	//get budget line
+    	//get budget line----------------------------------------------------------------------------------------------------------
     	$.ajax({
     		type : "GET",
 			url : '/service/budgetlinebydept/' + $(this).attr("data-dept-id"),
@@ -175,7 +193,7 @@ $(document).ready(function() {
 				console.log("ERROR : ", e);
 			}
     	});
-    	//get sponsor
+    	//get sponsor--------------------------------------------------------------------------------------------------------------
     	$.ajax({
     		type : "GET",
 			url : '/service/sponsorbydept/' + $(this).attr("data-dept-id"),
@@ -197,13 +215,16 @@ $(document).ready(function() {
     	});
     	$("#close").click();
     });
-//click first dept
+    
+//click first dept-------------------------------------------------------------------------------------------------------------------
     $("div a.dept").first().trigger("click");
-//delete row
+    
+//delete row-------------------------------------------------------------------------------------------------------------------------
     $("body").off("click", ".delete-btn").on("click", ".delete-btn", function(){
     	 $(this).closest("tr").remove();
     });
-//get bg by wb
+    
+//get bg by wb-----------------------------------------------------------------------------------------------------------------------
     $("body").on("change", "select.wb", function(){
     	var nexttd = $(this).closest("td").next();
     	if($(this).val()=="NEW"){
@@ -229,12 +250,16 @@ $(document).ready(function() {
         	});
     	}
     });
+    
+//map wb with bg (select bg)-----------------------------------------------------------------------------------------------------------
     $("body").on("change", "select.wb", function(){
     	if($(this).closest("td").prev().val()=="NEW"){
     		$(this).closest("td").next().find("input").val($("#c-dept").text()+"-"+$("#s-dept").text+"NEW");
     	}
     	
     });
+    
+//save budget---------------------------------------------------------------------------------------------------------------------------
     $("body").off("click", "#save").on("click", "#save", function(){
     	var budgetList = [];
     	$("tbody tr.budget-row").each(function(){
@@ -249,7 +274,8 @@ $(document).ready(function() {
     				amount : row.find(".bg-amount").val(),
     				allocate : row.find(".time-allocate").val(),
     				start : row.find(".start-time").val(),
-    				expense : row.find(".expense").val()	
+    				expense : row.find(".expense").val(),
+    				role: $("#sysrole").val()
     		}
     		budgetList.push(budget);
     	});
@@ -261,10 +287,72 @@ $(document).ready(function() {
 			accept: 'text/plain',
 			success : function(data){
 				console.log(data);
+				$("tbody tr input, select, #add-btn, #save, #submit-tool").attr('disabled', 'disaled');
 			},
 			error: function(e){
 				console.log("ERROR : ", e);
 			}
     	});
+    });
+    
+//submit budget----------------------------------------------------------------------------------------------------------
+    $("body").off("click", "#submit").on("click", "#submit", function(){
+    	$("#save").trigger("click");
+    	var budget={
+				cdept : $("#c-dept").attr("data-dept-id"),
+				role: $("#sysrole").val()
+    	};
+    	$.ajax({
+    		type : "POST",
+    		url : "/service/submitbudget",
+    		contentType : "application/json",
+    		data: JSON.stringify(budget),
+			accept: 'text/plain',
+			success : function(data){
+				console.log(data);
+				$("#add-btn").attr('disabled', 'disabled');
+				$("#submit-tool").attr('disabled', 'disabled');
+				$("#edit").attr('disabled', 'disabled');
+				$("#save").attr('disabled', 'disabled');
+				$("#submit").attr('disabled', 'disabled');
+				$("#reject").attr('disabled', 'disaled');
+				$("tbody tr input, select").attr('disabled', 'disaled');
+			},
+			error: function(e){
+				console.log("ERROR : ", e);
+			}
+    	});
+    });
+    
+ //Reject budget----------------------------------------------------------------------------------------------------------
+    $("body").off("click", "#reject").on("click", "#reject", function(){
+    	var budget={
+				cdept : $("#c-dept").attr("data-dept-id"),
+				role: $("#sysrole").val()
+    	};
+    	$.ajax({
+    		type : "POST",
+    		url : "/service/rejectbudget",
+    		contentType : "application/json",
+    		data: JSON.stringify(budget),
+			accept: 'text/plain',
+			success : function(data){
+				console.log(data);
+				$("#add-btn").attr('disabled', 'disabled');
+				$("#submit-tool").attr('disabled', 'disabled');
+				$("#edit").attr('disabled', 'disabled');
+				$("#save").attr('disabled', 'disabled');
+				$("#submit").attr('disabled', 'disabled');
+				$("#reject").attr('disabled', 'disaled');
+				$("tbody tr input, select").attr('disabled', 'disaled');
+			},
+			error: function(e){
+				console.log("ERROR : ", e);
+			}
+    	});
+    });
+//Edit -----------------------------------------------------------------------------------------------------------------
+    $("body").off("click", "#edit").on("click", "#edit", function(){
+       	$("tbody tr input, select, #add-btn, #save, #submit-tool").removeAttr('disabled');
     });
 })

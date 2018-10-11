@@ -5,6 +5,7 @@
 </head>
 <body>
      <th:block th:include="_adminheader"></th:block>
+     <input type="hidden" id="sysrole" th:value="${userInfo[2]}">
      <div>
 	     <div class="w3-sidebar w3-bar-block w3-border-right" style="display:none" id="mySidebar">
 			<button id="close" class="w3-bar-item w3-large">Close &times;</button>
@@ -19,7 +20,7 @@
      	<div class="row">
 	     	<div class="btn-group col-md-2">
 	     		<button class="btn btn-info btn-lg" id="menu"><i class="glyphicon glyphicon-list"></i>&nbsp;Dept</button>
-	     		<button class="btn btn-info btn-lg" data-toggle="modal" data-target="#addModal">Add Budget</button>
+	     		<button class="btn btn-info btn-lg" data-toggle="modal" data-target="#addModal" id="add-btn">Add Budget</button>
 	     	</div>
 			<div class="col-md-7">
 				<div class="col-md-2"></div>
@@ -37,9 +38,9 @@
 			</div>
 			<div class="btn-group col-md-3">
 				<button class="btn btn-info btn-lg" id="edit"><i class="glyphicon glyphicon-edit"></i>&nbsp;Edit</button>
-				<button class="btn btn-info btn-lg" id="discard"><i class="glyphicon glyphicon-ban-circle"></i>&nbsp;Discard</button>
 				<button class="btn btn-info btn-lg" id="save"><i class="glyphicon glyphicon-floppy-save">&nbsp;Save</i></button>
 				<button class="btn btn-info btn-lg" id="submit"><i class="glyphicon glyphicon-saved"></i>&nbsp;Submit</button>
+				<button class="btn btn-info btn-lg" id="reject"><i class="glyphicon glyphicon-ban-circle"></i>&nbsp;Reject</button>
 			</div>
      	</div>
 		<div class="modal fade" id="addModal" role="dialog">
