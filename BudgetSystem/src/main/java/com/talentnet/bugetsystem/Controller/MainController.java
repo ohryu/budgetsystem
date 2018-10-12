@@ -51,6 +51,10 @@ public class MainController {
 
 	@RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
 	public String loginPage(Model model) {
+		/*BUser user = userRepo.findByUserid(1);
+		user.setPassword(passwordEncoder.encode("123"));
+		user.setActive(false);
+		userRepo.save(user);*/
 		return "login";
 	}
 	
@@ -184,6 +188,18 @@ public class MainController {
 		model.addAttribute("accounts", accounts);
 		return "account";
 		
+	}
+	
+	@RequestMapping(value = "/user/account", method = RequestMethod.GET)
+	public String resetPasswordPage(Model model, Principal principal) {
+		String userName = principal.getName();
+		System.out.println("User Name: " + userName);
+		List<String> userInfo = new ArrayList<>();
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
+		userInfo.add("REVIEWER");
+		model.addAttribute("userInfo", userInfo);
+		return "password";
 	}
 	
 	@RequestMapping(value = "/403", method = RequestMethod.GET)

@@ -1,9 +1,12 @@
 package com.talentnet.bugetsystem.Controller;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.talentnet.bugetsystem.Entity.BUser;
 import com.talentnet.bugetsystem.Entity.Bg;
 import com.talentnet.bugetsystem.Entity.Budget;
 import com.talentnet.bugetsystem.Entity.BudgetDetail;
@@ -18,6 +22,7 @@ import com.talentnet.bugetsystem.Entity.BudgetForm;
 import com.talentnet.bugetsystem.Entity.BudgetLine;
 import com.talentnet.bugetsystem.Entity.Dept;
 import com.talentnet.bugetsystem.Entity.Group;
+import com.talentnet.bugetsystem.Entity.PasswordForm;
 import com.talentnet.bugetsystem.Entity.Wb;
 import com.talentnet.bugetsystem.Repository.BgRepo;
 import com.talentnet.bugetsystem.Repository.BudgetDetailRepo;
@@ -165,5 +170,40 @@ public class RestController {
 			budgetRepo.save(bud);
 		}
 		return "Rejected!";
+	}
+	
+	@RequestMapping(value = "/service/getallaccount", method = RequestMethod.GET)
+	public List<BUser> getallaccount(){
+		return userRepo.findAll();
+	}
+	
+	@RequestMapping(value = "/service/resetpass/{id}", method = RequestMethod.GET)
+	public String resetpass(@PathVariable("id") int id){
+		BUser user = userRepo.findByUserid(id);
+		user.setPassword(passwordEncoder.encode("P@ssword123"));
+		user.setActive(false);
+		userRepo.save(user);
+		return "Password Reseted Successfully!";
+	}
+	
+	@RequestMapping(value = "/service/deleteaccount/{id}", method = RequestMethod.GET)
+	public String deleteAccount(@PathVariable("id") int id){
+		BUser user = userRepo.findByUserid(id);
+		userroleRepo.deleteAll(userroleRepo.findByUser(user));
+		userRepo.deleteByUserid(id);
+		return "Account Deleted Successfully!";
+	}
+	
+	@RequestMapping(value="/service/changepassword", method = RequestMethod.POST)
+	public String changePassword(@RequestBody PasswordForm password, Principal principal){
+		BUser user = userRepo.findByUsername(principal.getName());
+		if(!passwordEncoder.matches(password.getOldpass(), user.getPassword())) {
+			return "Current password does not match!";
+		}else {
+			user.setPassword(passwordEncoder.encode(password.getNewpass()));
+			user.setActive(true);
+			userRepo.save(user);
+		}
+		return "Password Changed Successful!";
 	}
 }
