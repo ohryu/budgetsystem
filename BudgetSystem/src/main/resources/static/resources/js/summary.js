@@ -179,7 +179,7 @@ $(document).ready(function() {
 					$("#submit-tool").attr('disabled', 'disabled');
 					$("#edit").attr('disabled', 'disabled');
 					$("#save").attr('disabled', 'disabled');
-					$("#reject").removeAttr('disabled');
+					$("#reject").attr('disabled');
 				}else if(($("#sysrole").val()=="REPORTER" && data[0].budget.status==0) || ($("#sysrole").val()=="REVIEWER" && data[0].budget.status==1) || ($("#sysrole").val()=="NOT" && data[0].budget.status==2)){
 					$("#add-btn").attr('disabled', 'disabled');
 					$("#submit-tool").attr('disabled', 'disabled');
