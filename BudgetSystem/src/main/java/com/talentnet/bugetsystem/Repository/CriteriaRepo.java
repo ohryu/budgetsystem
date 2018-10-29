@@ -5,14 +5,11 @@ import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.talentnet.bugetsystem.Entity.BUser;
-
+import com.talentnet.bugetsystem.Entity.Criteria;
 
 @Repository
-public interface UserRepo extends JpaRepository<BUser, Integer>{
-	BUser findByUsername(String username);
-	BUser findByUserid(Integer id);
-	
+public interface CriteriaRepo extends JpaRepository<Criteria, Integer>{
+	Criteria findByCriteriaid(Integer id);
 	@Transactional
-	void removeByUserid(Integer id);
+	void removeByCriteriaid(Integer id);
 }

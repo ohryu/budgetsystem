@@ -1,6 +1,6 @@
-package com.talentnet.bugetsystem.Entity;
+package com.talentnet.bugetsystem.DTO;
 
-public class PasswordForm {
+public class PasswordDTO {
 	private String oldpass;
 	private String newpass;
 	

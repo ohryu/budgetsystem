@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Budget System</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css"
+	href="../resources/css/general.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript"
+	src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
+
+</head>
+<body>
+	<th:block th:include="_adminheader"></th:block>
+	<div class="container">
+		<h2>Budget Line Management</h2>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr class="trMenu">
+						<th colspan="2">Budget Line</th>
+						<th colspan="2">WB Group</th>
+						<th>WB Detail</th>
+						<th>
+							<!--button modal add-->
+							<button type="button" class="btn btn-info btn-lg"
+								data-toggle="modal" data-target="#addModal" id="add">
+								<span class="glyphicon glyphicon-plus"></span>
+							</button>
+						</th>
+					</tr>
+				</thead>
+				<tbody id="budget">
+			
+				</tbody>
+			</table>
+		</div>
+
+		<!-- Modal edit bg-->
+		 <div class="modal fade" id="editBGModal" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Edit WB Detail</h4>
+					</div>
+					<div class="modal-body">
+						<label> WB Detail Code: </label>
+						<input type="text" id="edit-BG-bgcode"><br>				
+						<label> WB Detail Name: </label>
+						<input type="text" id="edit-BG-bgname"><br>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-custom" id="edit-BG-btn">Submit</button>
+						<button type="button" class="btn btn-custom" id="edit-close"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div> 
+		
+		<!-- Modal edit budgetline-->
+		 <div class="modal fade" id="editBLModal" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Edit Budget Line</h4>
+					</div>
+					<div class="modal-body">
+						<label> Budget Line Code: </label>
+						<input type="text" id="edit-BL-blcode"><br>
+						<label> Budget Line Name: </label>
+						<input type="text" id="edit-BL-blname">				
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-custom" id="edit-BL-btn">Submit</button>
+						<button type="button" class="btn btn-custom" id="edit-close"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div> 
+		
+		<!-- Modal edit WB-->
+		 <div class="modal fade" id="editWBModal" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Edit WB Group</h4>
+					</div>
+					<div class="modal-body">
+						<label> WB Group Code: </label>
+						<input type="text" id="edit-WB-wbcode"><br>				
+						<label> WB Group Name: </label>
+						<input type="text" id="edit-WB-wbname"><br>		
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-custom" id="edit-WB-btn">Submit</button>
+						<button type="button" class="btn btn-custom" id="edit-close"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		 
+		<!-- Modal Add new-->
+		<div class="modal fade" id="addModal" role="dialog">
+	    <div class="modal-dialog">
+	    
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title">New</h4>
+	          <button type="button" class="btn btn-default" id="add-bl">Budget Line</button>
+	          <button type="button" class="btn btn-default" id="add-wb">Wb Group</button>
+	          <button type="button" class="btn btn-default" id="add-bg">WB Detail</button>
+	        </div>
+	        <div class="modal-body" id="new-budget" data-role="">
+	         	
+	        </div>
+	        <div class="modal-footer">
+	          <button type="button" id="add-btn" class="btn btn-custom" data-dismiss="modal">Add</button>
+	          <button type="button" class="btn btn-custom" data-dismiss="modal">Close</button>
+	        </div>
+	      </div>
+	      
+	    </div>
+	  </div>
+	</div>
+</body>
+<script src="/resources/js/admin_bline.js"></script>
+</html>

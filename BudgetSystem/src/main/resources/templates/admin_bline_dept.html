@@ -15,48 +15,28 @@
 <body>
 	<th:block th:include="_adminheader"></th:block>
 	<div class="container">
-		<h2>Accounts Management</h2>
+		<h2>Budget Line Management</h2>
 		<div class="table-responsive">
 			<table class="table table-striped">
 				<thead>
 					<tr class="trMenu">
-						<th>User Name</th>
-						<th>Full Name</th>
-						<th>Role</th>
+						<th>Company>Group</th>
+						<th>Dept</th>
+						<th>Budget Line</th>
 						<th>
 							<!--button modal add-->
 							<button type="button" class="btn btn-info btn-lg"
-								data-toggle="modal" data-target="#addModal">
+								data-toggle="modal" data-target="#addModal" id="add">
 								<span class="glyphicon glyphicon-plus"></span>
 							</button>
-
 						</th>
 					</tr>
 				</thead>
-				<tbody id="account"></tbody>
+				<tbody id="budgetline">
+			
+				</tbody>
 			</table>
 		</div>
-
-		<!-- Modal edit-->
-		 <div class="modal fade" id="editModal" role="dialog">
-			<div class="modal-dialog modal-lg">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-						<h4 class="modal-title">Edit Account</h4>
-					</div>
-					<div class="modal-body" id="edit-acc">
-								
-				
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-custom" id="edit-acc-btn">Submit</button>
-						<button type="button" class="btn btn-custom" id="edit-close"
-							data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div> 
 		<!-- Modal Add new-->
 		 <div class="modal fade" id="addModal" role="dialog">
 	    <div class="modal-dialog">
@@ -65,22 +45,42 @@
 	      <div class="modal-content">
 	        <div class="modal-header">
 	          <button type="button" class="close" data-dismiss="modal">&times;</button>
-	          <h4 class="modal-title">New Account</h4>
-	          <button type="button" class="btn btn-default" id="add-admin" data-role-id="1">ADMIN</button>
-	          <button type="button" class="btn btn-default" id="add-user" data-role-id="2">USER</button>
+	          <h4 class="modal-title">Add Budget Line To Dept</h4>
 	        </div>
-	        <div class="modal-body" id="new-acc" data-role="">
-	         	
-	        </div>
+	        <div class="modal-body" id="new-dept" data-role="">
+	         	<table id="addblinetodept">
+	         		<tr>
+	         			<td>Company: </td>
+	         			<td><select id="company"></select></td>
+	         		</tr>
+	         		<tr>
+	         			<td>Group: </td>
+	         			<td><select id="group"></select></td>
+	         		</tr>
+	         		<tr>
+	         			<td>Dept: </td>
+	         			<td><select id="dept"></select></td>
+	         		</tr>
+	         		<tr>
+	         			<td>Budget Line: </td>
+	         		</tr>
+	         	</table>
+	         	<table id="blinelist">
+	         		<tr>
+	         			<td><select class="bline"></select></td>
+	         			<td><button class="btn btn-info del-bline">Delete</button></td>
+	         		</tr>
+	         	</table>
+	         	<button id="addbline">Add Budget Line</button>
+ 	        </div>
 	        <div class="modal-footer">
-	          <button type="button" id="add-account" class="btn btn-custom" data-dismiss="modal">Add</button>
+	          <button type="button" id="add-btn" class="btn btn-custom" data-dismiss="modal">Add</button>
 	          <button type="button" class="btn btn-custom" data-dismiss="modal">Close</button>
 	        </div>
-	      </div>
-	      
+	      </div>    
 	    </div>
 	  </div>
 	</div>
 </body>
-<script src="/resources/js/admin_account.js"></script>
+<script src="/resources/js/admin_bline_dept.js"></script>
 </html>

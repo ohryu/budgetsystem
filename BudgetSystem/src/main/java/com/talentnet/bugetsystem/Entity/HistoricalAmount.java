@@ -17,7 +17,7 @@ public class HistoricalAmount implements Serializable{
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Integer haid;
 	
 	@Column(name = "WB_NAME")
 	private String wbname;
@@ -29,14 +29,17 @@ public class HistoricalAmount implements Serializable{
 	private String sponsor;
 	
 	@Column(name = "AMOUNT")
-	private Integer amount;
+	private Long amount;
+	
+	@Column(name = "COMPANYID")
+	private int companyid;
 
-	public int getId() {
-		return id;
+	public Integer getHaid() {
+		return haid;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setHaid(Integer haid) {
+		this.haid = haid;
 	}
 
 	public String getWbname() {
@@ -63,12 +66,22 @@ public class HistoricalAmount implements Serializable{
 		this.sponsor = sponsor;
 	}
 
-	public Integer getAmount() {
+	public Long getAmount() {
 		return amount;
 	}
 
-	public void setAmount(Integer amount) {
+	public void setAmount(Long amount) {
 		this.amount = amount;
 	}
+
+	public int getCompanyid() {
+		return companyid;
+	}
+
+	public void setCompanyid(int companyid) {
+		this.companyid = companyid;
+	}
+
+	
 	
 }

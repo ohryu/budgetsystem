@@ -50,7 +50,7 @@ public class BudgetDetail implements Serializable{
 	}
 
 	@Column(name = "AMOUNT")
-	private Integer amount;
+	private Long amount;
 	
 	@Column(name = "ALLOCATION_TIME")
 	@Temporal(TemporalType.DATE)
@@ -61,7 +61,7 @@ public class BudgetDetail implements Serializable{
 	private Date starttime;
 	
 	@Column(name = "EXPENSE")
-	private Integer expense;
+	private Long expense;
 
 	@Column(name = "NEW")
 	private String newdetail;
@@ -106,11 +106,11 @@ public class BudgetDetail implements Serializable{
 		this.bg = bg;
 	}
 
-	public Integer getAmount() {
+	public Long getAmount() {
 		return amount;
 	}
 
-	public void setAmount(Integer amount) {
+	public void setAmount(Long amount) {
 		this.amount = amount;
 	}
 
@@ -130,11 +130,11 @@ public class BudgetDetail implements Serializable{
 		this.starttime = starttime;
 	}
 
-	public Integer getExpense() {
+	public Long getExpense() {
 		return expense;
 	}
 
-	public void setExpense(Integer expense) {
+	public void setExpense(Long expense) {
 		this.expense = expense;
 	}
 	

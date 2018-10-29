@@ -8,6 +8,7 @@ $(document).ready(function() {
 			group = data;
 		},
 		error : function(e) {
+			alert("System error, please try again!");
 			console.log("ERROR : ", e);
 		}
 	});
@@ -18,6 +19,7 @@ $(document).ready(function() {
 			detail = data;
 		},
 		error : function(e) {
+			alert("System error, please try again!");
 			console.log("ERROR : ", e);
 		}
 	});
@@ -53,7 +55,7 @@ $(document).ready(function() {
 									row+='</select>\
 						  			</td>\
 							 		<td><input type="text" class="bg" size="10"></td>\
-						  			<td><input disabled type="text" class="code" size="10"></td>\
+						  			<td></td>\
 						  			<td><input type="text" class="bg-amount" size="10"></td>\
 						  			<td><input type="date" class="time-allocate" size="10"></td>\
 						  			<td><input type="date" class="start-time" size="10"></td>\
@@ -78,7 +80,7 @@ $(document).ready(function() {
 						 			row+='</select>\
 						  			</td>\
 						 			<td><input type="text" class="bg" size="10"></td>\
-							  		<td><input disabled type="text" class="code" size="10"></td>\
+							  		<td></td>\
 							  		<td><input type="text" class="bg-amount" size="10"></td>\
 							  		<td><input type="date" class="time-allocate" size="10"></td>\
 							  		<td><input type="date" class="start-time" size="10"></td>\
@@ -91,6 +93,7 @@ $(document).ready(function() {
 				}
 			},
 			error : function(e) {
+				alert("System error, please try again!");
 				console.log("ERROR : ", e);
 			}
 		});	
@@ -165,17 +168,29 @@ $(document).ready(function() {
 			 		row+='</tr>';
 			 		$("tbody").append(row);
 				});
-				if(($("#sysrole").val()=="REPORTER" && data[0].budget.status!=0) || ($("#sysrole").val()=="REVIEWER" && data[0].budget.status!=1) || ($("#sysrole").val()=="NOT" && data[0].budget.status!=2)){
+				if(data.length==0){
+					$("#add-btn").attr('disabled', 'disabled');
+					$("#submit-tool").attr('disabled', 'disabled');
+					$("#save").attr('disabled', 'disabled');
+					$("#submit").attr('disabled', 'disabled');
+					$("#reject").attr('disabled', 'disaled');
+				}else if(($("#sysrole").val()=="REPORTER" && data[0].budget.status!=0) || ($("#sysrole").val()=="REVIEWER" && data[0].budget.status!=1) || ($("#sysrole").val()=="NOT" && data[0].budget.status!=2)){
 					$("#add-btn").attr('disabled', 'disabled');
 					$("#submit-tool").attr('disabled', 'disabled');
 					$("#edit").attr('disabled', 'disabled');
 					$("#save").attr('disabled', 'disabled');
-					$("#submit").attr('disabled', 'disabled');
-					$("#reject").attr('disabled', 'disaled');
+					$("#reject").removeAttr('disabled');
+				}else if(($("#sysrole").val()=="REPORTER" && data[0].budget.status==0) || ($("#sysrole").val()=="REVIEWER" && data[0].budget.status==1) || ($("#sysrole").val()=="NOT" && data[0].budget.status==2)){
+					$("#add-btn").attr('disabled', 'disabled');
+					$("#submit-tool").attr('disabled', 'disabled');
+					$("#edit").attr('disabled', 'disabled');
+					$("#save").attr('disabled', 'disabled');
+					$("#reject").removeAttr('disabled');
 				}
 				$("tbody tr input, select, #add-btn, #save, #submit-tool").attr('disabled', 'disaled');
 			},
 			error : function(e) {
+				alert("System error, please try again!");
 				console.log("ERROR : ", e);
 			}
     	});
@@ -186,10 +201,11 @@ $(document).ready(function() {
 			success : function(data) {
 				$("#bg-line").empty();
 				$.each(data, function(key, val){
-					$("#bg-line").append("<option value='"+val.blid+"'>"+val.blname+"</option>");               
+					$("#bg-line").append("<option value='"+val.bline.blid+"'>"+val.bline.blname+"</option>");               
 	            });
 			},
 			error : function(e) {
+				alert("System error, please try again!");
 				console.log("ERROR : ", e);
 			}
     	});
@@ -210,6 +226,7 @@ $(document).ready(function() {
 	            });
 			},
 			error : function(e) {
+				alert("System error, please try again!");
 				console.log("ERROR : ", e);
 			}
     	});
@@ -245,6 +262,7 @@ $(document).ready(function() {
     				nexttd.append(dropdown);
     			},
     			error : function(e) {
+    				alert("System error, please try again!");
     				console.log("ERROR : ", e);
     			}
         	});
@@ -279,20 +297,36 @@ $(document).ready(function() {
     		}
     		budgetList.push(budget);
     	});
-    	$.ajax({
-    		type : "POST",
-    		url : "/service/savebudget",
-    		contentType : "application/json",
-    		data: JSON.stringify(budgetList),
-			accept: 'text/plain',
-			success : function(data){
-				console.log(data);
-				$("tbody tr input, select, #add-btn, #save, #submit-tool").attr('disabled', 'disaled');
-			},
-			error: function(e){
-				console.log("ERROR : ", e);
-			}
-    	});
+    	var blank = 0;
+    	$('.summary tbody input[type="text"]').each(function(){
+    		if($(this).val().length==0){
+    			blank++;
+    		}
+    	})
+    	if(blank > 0){
+    		alert("Can not leave fields blank!")
+    	}else{
+    		$.ajax({
+        		type : "POST",
+        		url : "/service/savebudget",
+        		contentType : "application/json",
+        		data: JSON.stringify(budgetList),
+    			accept: 'text/plain',
+    			success : function(data){
+    				console.log(data);
+    				$(".dept").each(function(){
+    					if($(this).attr("data-dept-id")==$("#c-dept").attr("data-dept-id")){
+    						$(this).trigger("click");
+    					}
+    				})
+    			},
+    			error: function(e){
+    				alert("System error, please try again!");
+    				console.log("ERROR : ", e);
+    			}
+        	});
+    	}
+    	
     });
     
 //submit budget----------------------------------------------------------------------------------------------------------
@@ -319,6 +353,7 @@ $(document).ready(function() {
 				$("tbody tr input, select").attr('disabled', 'disaled');
 			},
 			error: function(e){
+				alert("System error, please try again!");
 				console.log("ERROR : ", e);
 			}
     	});
@@ -347,6 +382,7 @@ $(document).ready(function() {
 				$("tbody tr input, select").attr('disabled', 'disaled');
 			},
 			error: function(e){
+				alert("System error, please try again!");
 				console.log("ERROR : ", e);
 			}
     	});
@@ -355,4 +391,68 @@ $(document).ready(function() {
     $("body").off("click", "#edit").on("click", "#edit", function(){
        	$("tbody tr input, select, #add-btn, #save, #submit-tool").removeAttr('disabled');
     });
+    
+//Utilize historical amount---------------------------------------------------------------------------------------------
+    $("body").off("click", "#submit-tool").on("click", "#submit-tool", function(){
+    	if($("#UHA").is(':checked')){
+	    	var inputs = [];
+	    	var count = 0;
+    		$(".usetool:checked").each(function(){
+    			row = $(this).closest("tr");
+    			input = [];		
+    			input.push(row.find(".sponsor-dept").attr("data-dept-id"));
+    			input.push(row.find(".bl").attr("data-bl-id"));
+    			input.push($("#percent-add-in").val());
+    			inputs.push(input);
+    		})
+    		$.ajax({
+    				type : "POST",
+		    		url : "/service/hatool",
+		    		contentType : "application/json",
+		    		data: JSON.stringify(inputs),
+					accept: 'text/plain',
+					success : function(data){
+						$(".usetool:checked").each(function(){
+			    			row = $(this).closest("tr");
+			    			row.find(".expense").val(data[count]);
+			    			count++;
+						})
+					},
+					error: function(e){
+						alert("System error, please try again!");
+						console.log("Error: ", e);
+					}
+    		})
+    	}else{
+    		var inputs = [];
+	    	var count = 0;
+    		$(".usetool:checked").each(function(){
+    			row = $(this).closest("tr");
+    			input = [];		
+    			input.push(row.find(".sponsor-dept").attr("data-dept-id"));
+    			input.push(row.find(".bl").attr("data-bl-id"));
+    			input.push($("#criteria").val());
+    			input.push($("#cost-allocation").val());
+    			inputs.push(input);
+    		})
+    		$.ajax({
+    				type : "POST",
+		    		url : "/service/hatool",
+		    		contentType : "application/json",
+		    		data: JSON.stringify(inputs),
+					accept: 'text/plain',
+					success : function(data){
+						$(".usetool:checked").each(function(){
+			    			row = $(this).closest("tr");
+			    			row.find(".expense").val(data[count]);
+			    			count++;
+						})
+					},
+					error: function(e){
+						alert("System error, please try again!");
+						console.log("Error: ", e);
+					}
+    		})
+    	}
+    })
 })

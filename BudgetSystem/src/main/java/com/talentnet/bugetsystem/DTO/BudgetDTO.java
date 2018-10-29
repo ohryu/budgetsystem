@@ -1,18 +1,18 @@
-package com.talentnet.bugetsystem.Entity;
+package com.talentnet.bugetsystem.DTO;
 
 import java.sql.Date;
 
-public class BudgetForm {
+public class BudgetDTO {
 	private String id;
 	private int cdept;
 	private int sdept;
 	private int bline;
 	private String wb;
 	private String bg;
-	private int amount;
+	private Long amount;
 	private Date allocate;
 	private Date start;
-	private int expense;
+	private Long expense;
 	private String role;
 	
 	
@@ -59,10 +59,10 @@ public class BudgetForm {
 	public void setBg(String bg) {
 		this.bg = bg;
 	}
-	public int getAmount() {
+	public Long getAmount() {
 		return amount;
 	}
-	public void setAmount(int amount) {
+	public void setAmount(Long amount) {
 		this.amount = amount;
 	}
 	public Date getAllocate() {
@@ -77,10 +77,10 @@ public class BudgetForm {
 	public void setStart(Date start) {
 		this.start = start;
 	}
-	public int getExpense() {
+	public Long getExpense() {
 		return expense;
 	}
-	public void setExpense(int expense) {
+	public void setExpense(Long expense) {
 		this.expense = expense;
 	}
 	

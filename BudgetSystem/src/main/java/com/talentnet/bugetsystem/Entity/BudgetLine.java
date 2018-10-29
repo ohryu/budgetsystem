@@ -26,10 +26,6 @@ public class BudgetLine implements Serializable{
 	
 	@Column(name = "BL_NAME")
 	private String blname;
-	
-	@ManyToOne
-	@JoinColumn(name = "DEPT_id")
-	private Dept dept;
 
 	public Integer getBlid() {
 		return blid;
@@ -53,14 +49,6 @@ public class BudgetLine implements Serializable{
 
 	public void setBlname(String blname) {
 		this.blname = blname;
-	}
-
-	public Dept getDept() {
-		return dept;
-	}
-
-	public void setDept(Dept dept) {
-		this.dept = dept;
 	}
 	
 }

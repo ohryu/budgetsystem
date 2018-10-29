@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Budget System</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css"
+	href="../resources/css/general.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript"
+	src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
+
+</head>
+<body>
+	<th:block th:include="_adminheader"></th:block>
+	<div class="container">
+		<h2>Dept Management</h2>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr class="trMenu">
+						<th colspan="2">Company</th>
+						<th colspan="2">Group</th>
+						<th>Dept</th>
+						<th>Control</th>
+						<th>Sponsor</th>
+						<th>
+							<!--button modal add-->
+							<button type="button" class="btn btn-info btn-lg"
+								data-toggle="modal" data-target="#addModal" id="add">
+								<span class="glyphicon glyphicon-plus"></span>
+							</button>
+						</th>
+					</tr>
+				</thead>
+				<tbody id="dept">
+			
+				</tbody>
+			</table>
+		</div>
+
+		<!-- Modal edit dept-->
+		 <div class="modal fade" id="editDeptModal" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Edit Dept</h4>
+					</div>
+					<div class="modal-body">
+						<label> Dept Code: </label>
+						<input type="text" id="edit-dept-deptcode"><br>				
+						<label> Dept Name: </label>
+						<input type="text" id="edit-dept-deptname"><br>
+						<input type="checkbox" id="edit-dept-control">Control Dept<br>
+						<input type="checkbox" id="edit-dept-sponsor">Sponsor Dept
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-custom" id="edit-dept-btn">Submit</button>
+						<button type="button" class="btn btn-custom" id="edit-close"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div> 
+		
+		<!-- Modal edit comp-->
+		 <div class="modal fade" id="editCompModal" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Edit Company</h4>
+					</div>
+					<div class="modal-body">
+						<label> Company Name: </label>
+						<input type="text" id="edit-comp-compname">				
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-custom" id="edit-comp-btn">Submit</button>
+						<button type="button" class="btn btn-custom" id="edit-close"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div> 
+		
+		<!-- Modal edit group-->
+		 <div class="modal fade" id="editGroupModal" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Edit Group</h4>
+					</div>
+					<div class="modal-body">
+						<label> Group Code: </label>
+						<input type="text" id="edit-group-groupcode">				
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-custom" id="edit-group-btn">Submit</button>
+						<button type="button" class="btn btn-custom" id="edit-close"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		 
+		<!-- Modal Add new-->
+		 <div class="modal fade" id="addModal" role="dialog">
+	    <div class="modal-dialog">
+	    
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title">New</h4>
+	          <button type="button" class="btn btn-default" id="add-comp" data-role-id="1">Company</button>
+	          <button type="button" class="btn btn-default" id="add-group" data-role-id="2">Group</button>
+	          <button type="button" class="btn btn-default" id="add-dept" data-role-id="2">Dept</button>
+	        </div>
+	        <div class="modal-body" id="new-dept" data-role="">
+	         	
+	        </div>
+	        <div class="modal-footer">
+	          <button type="button" id="add-btn" class="btn btn-custom" data-dismiss="modal">Add</button>
+	          <button type="button" class="btn btn-custom" data-dismiss="modal">Close</button>
+	        </div>
+	      </div>
+	      
+	    </div>
+	  </div>
+	</div>
+</body>
+<script src="/resources/js/admin_dept.js"></script>
+</html>

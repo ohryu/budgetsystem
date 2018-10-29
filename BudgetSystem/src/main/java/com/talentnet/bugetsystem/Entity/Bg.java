@@ -25,7 +25,7 @@ public class Bg implements Serializable {
 	private String bgname;
 	
 	@Column(name = "BG_CODE")
-	private Integer bgcode;
+	private String bgcode;
 	
 	@ManyToOne
 	@JoinColumn(name = "WB_ID")
@@ -47,11 +47,11 @@ public class Bg implements Serializable {
 		this.bgname = bgname;
 	}
 
-	public Integer getBgcode() {
+	public String getBgcode() {
 		return bgcode;
 	}
 
-	public void setBgcode(Integer bgcode) {
+	public void setBgcode(String bgcode) {
 		this.bgcode = bgcode;
 	}
 

@@ -9,11 +9,11 @@
      <div>
 	     <div class="w3-sidebar w3-bar-block w3-border-right" style="display:none" id="mySidebar">
 			<button id="close" class="w3-bar-item w3-large">Close &times;</button>
-			<div th:each="groupdepts : ${companydepts}">
-				<label th:data-company-id="${groupdepts[0][0].getGroup().getCompany().getCompanyid()}" th:text="${groupdepts[0][0].getGroup().getCompany().getCompanyname()}"></label>
-				<div th:each="groupdept : ${groupdepts}">
-					<label th:text="${groupdept[0].getGroup().getGroupcode()}"></label>
-					<a class="w3-bar-item w3-button dept" th:each="dept : ${groupdept}" th:data-dept-id="${dept.getDeptid()}" th:text="${dept.getDeptname()}"></a>
+			<div th:each="company : ${companydepts}">
+				<label th:data-company-id="${company.getCompany().getCompanyid()}" th:text="${company.getCompany().getCompanyname()}"></label>
+				<div th:each="group : ${company.getGrouplist()}">
+					<label th:text="${group.getGroup().getGroupcode()}"></label>
+					<a class="w3-bar-item w3-button dept" th:each="dept : ${group.getDeptlist()}" th:data-dept-id="${dept.getDeptid()}" th:text="${dept.getDeptname()}"></a>
 				</div>
 			</div>
 		 </div>
@@ -25,11 +25,15 @@
 			<div class="col-md-7">
 				<div class="col-md-2"></div>
 				<div class="col-md-4">
-					<input type="radio" name="tool" value="UHA"><label>Utilize historical amount</label><br>
+					<input type="radio" name="tool" id="UHA" checked><label>Utilize historical amount</label><br>
 					<input type="text" id="percent-add-in" placeholder="Percent add in">
 				</div>
 				<div class="col-md-3">
-					<input type="radio" name="tool" value="CD"><label> Cost driver</label><br>
+					<input type="radio" name="tool" id="CD"><label> Cost driver</label><br>
+					<select id="criteria">
+						<option value = "0">Historic figure</option>
+						<option th:each="criteria : ${criterias}" th:value="${criteria.getCriteriaid()}" th:text="${criteria.getCriterianame()}"></option>
+					</select>
 					<input type="text" id="cost-allocation" placeholder="Cost Allocation">
 				</div>
 				<div class="col-md-1">
@@ -41,6 +45,7 @@
 				<button class="btn btn-info btn-lg" id="save"><i class="glyphicon glyphicon-floppy-save">&nbsp;Save</i></button>
 				<button class="btn btn-info btn-lg" id="submit"><i class="glyphicon glyphicon-saved"></i>&nbsp;Submit</button>
 				<button class="btn btn-info btn-lg" id="reject"><i class="glyphicon glyphicon-ban-circle"></i>&nbsp;Reject</button>
+				<button class="btn btn-info btn-lg" id="print"><i class="glyphicon glyphicon-ban-print"></i>&nbsp;Print</button>
 			</div>
      	</div>
 		<div class="modal fade" id="addModal" role="dialog">
