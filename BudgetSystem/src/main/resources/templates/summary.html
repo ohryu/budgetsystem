@@ -13,7 +13,7 @@
 				<label th:data-company-id="${company.getCompany().getCompanyid()}" th:text="${company.getCompany().getCompanyname()}"></label>
 				<div th:each="group : ${company.getGrouplist()}">
 					<label th:text="${group.getGroup().getGroupcode()}"></label>
-					<a class="w3-bar-item w3-button dept" th:each="dept : ${group.getDeptlist()}" th:data-dept-id="${dept.getDeptid()}" th:text="${dept.getDeptname()}"></a>
+					<a class="w3-bar-item w3-button dept" th:each="dept : ${group.getDeptlist()}" th:data-dept-id="${dept.getDeptid()}" th:data-dept-code="${dept.getDeptcode()}" th:text="${dept.getDeptname()}"></a>
 				</div>
 			</div>
 		 </div>
@@ -37,7 +37,7 @@
 					<input type="text" id="cost-allocation" placeholder="Cost Allocation">
 				</div>
 				<div class="col-md-1">
-					<button class="btn btn-info btn-lg" id="submit-tool">Apply</button>
+					<button class="btn btn-info btn-lg" th:data-date="${date.getYear()}" id="submit-tool">Apply</button>
 				</div>
 			</div>
 			<div class="btn-group col-md-3">
@@ -93,7 +93,7 @@
 						<th>Time Allocation</th>
 						<th>Start Time</th>
 						<th>Expense</th>
-						<th>Delete</th>
+						<th>Action</th>
 						<th>Tool</th>
 					</tr>
 				</thead>

@@ -1,6 +1,7 @@
 package com.talentnet.bugetsystem.DTO;
 
 import java.sql.Date;
+import java.util.List;
 
 public class BudgetDTO {
 	private String id;
@@ -10,12 +11,19 @@ public class BudgetDTO {
 	private String wb;
 	private String bg;
 	private Long amount;
-	private Date allocate;
+	private int allocate;
 	private Date start;
 	private Long expense;
 	private String role;
+	private List<List<String>> moredetail;
 	
 	
+	public List<List<String>> getMoredetail() {
+		return moredetail;
+	}
+	public void setMoredetail(List<List<String>> moredetail) {
+		this.moredetail = moredetail;
+	}
 	public String getId() {
 		return id;
 	}
@@ -65,10 +73,10 @@ public class BudgetDTO {
 	public void setAmount(Long amount) {
 		this.amount = amount;
 	}
-	public Date getAllocate() {
+	public int getAllocate() {
 		return allocate;
 	}
-	public void setAllocate(Date allocate) {
+	public void setAllocate(int allocate) {
 		this.allocate = allocate;
 	}
 	public Date getStart() {

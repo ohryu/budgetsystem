@@ -17,7 +17,18 @@
 .navbar-inverse .navbar-nav>li>a {
 	color: #FFF;
 }
-
+table tbody tr td select{
+	max-width: 150px;
+}
+table tbody tr.budget-row{
+	background-color: #f0ffff !important;
+}
+table tbody tr.budget-row td.bl{
+	cursor: pointer;
+}
+table tbody tr.more-detail{
+	background-color: #ffffff !important;
+}
 .bottomCustom {
 	text-align: center;
     position: inherit;

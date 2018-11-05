@@ -32,6 +32,7 @@ $(document).ready(function() {
 		$("#budget").empty();
 		$.ajax({
 			type: "GET",
+			async: false,
 			url : "/service/getbgs",
 			success : function(data){
 				$.each(data, function(key, val){
@@ -111,6 +112,7 @@ $(document).ready(function() {
 						})
 						$("#budget").append(table);
 					}
+					if(key==(data.length)-1) return false;
 				});
 			},
 			error : function(e){
@@ -194,8 +196,12 @@ $(document).ready(function() {
     		data: JSON.stringify(postdata),
 			accept: 'text/plain',
 			success : function(data){
-				console.log(data);
-				getData();
+				if(data.indexOf("Successful!")>-1){
+					getData();
+					$("#add-close").trigger("click");
+				}else{
+					alert(data);
+				}
 			},	
 			error: function(e){
 				alert("System error, Please try again!")
@@ -221,8 +227,12 @@ $(document).ready(function() {
 	    		data: JSON.stringify([blid, $("#edit-BL-blcode").val(), $("#edit-BL-blname").val()]),
 				accept: 'text/plain',
 				success : function(data){
-					console.log(data);
-					getData();
+					if(data.indexOf("Successful!")>-1){
+						getData();
+						$("#edit-BL-close").trigger("click");
+					}else{
+						alert(data);
+					}
 				},	
 				error: function(e){
 					alert("System error, Please try again!")
@@ -248,8 +258,12 @@ $(document).ready(function() {
 	    		data: JSON.stringify([wbid, $("#edit-WB-wbcode").val(), $("#edit-WB-wbname").val()]),
 				accept: 'text/plain',
 				success : function(data){
-					console.log(data);
-					getData();
+					if(data.indexOf("Successful!")>-1){
+						getData();
+						$("#edit-WB-close").trigger("click");
+					}else{
+						alert(data);
+					}
 				},	
 				error: function(e){
 					alert("System error, Please try again!")
@@ -274,8 +288,12 @@ $(document).ready(function() {
 			    		data: JSON.stringify([bgid, $("#edit-BG-bgcode").val(), $("#edit-BG-bgname").val()]),
 						accept: 'text/plain',
 						success : function(data){
-							console.log(data);
-							getData();
+							if(data.indexOf("Successful!")>-1){
+								getData();
+								$("#edit-BG-close").trigger("click");
+							}else{
+								alert(data);
+							}
 						},	
 						error: function(e){
 							alert("System error, Please try again!")

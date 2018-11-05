@@ -18,6 +18,7 @@ public interface BudgetDetailRepo extends JpaRepository<BudgetDetail, Integer>{
 	List<BudgetDetail> findByBudget(Budget budget);
 	List<BudgetDetail> findByDept(Dept dept);
 	List<BudgetDetail> findAllByOrderByBudgetDesc();
+	BudgetDetail findByBdid(Integer id);
 	
 	@Transactional
 	void removeByBline(BudgetLine bline);

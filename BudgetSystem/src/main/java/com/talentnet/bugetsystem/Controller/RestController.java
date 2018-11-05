@@ -1,10 +1,12 @@
 package com.talentnet.bugetsystem.Controller;
 
 import java.security.Principal;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.talentnet.bugetsystem.DTO.BudgetDTO;
+import com.talentnet.bugetsystem.DTO.BudgetDetailDTO;
 import com.talentnet.bugetsystem.DTO.CrtCompDTO;
 import com.talentnet.bugetsystem.DTO.PasswordDTO;
 import com.talentnet.bugetsystem.DTO.BlineDTO;
@@ -37,8 +40,10 @@ import com.talentnet.bugetsystem.Entity.Dept;
 import com.talentnet.bugetsystem.Entity.Group;
 import com.talentnet.bugetsystem.Entity.HistoricalAmount;
 import com.talentnet.bugetsystem.Entity.MapBline_Dept;
+import com.talentnet.bugetsystem.Entity.MoreDetail;
 import com.talentnet.bugetsystem.Entity.UserRole;
 import com.talentnet.bugetsystem.Entity.Wb;
+import com.talentnet.bugetsystem.Entity.Year;
 import com.talentnet.bugetsystem.Repository.BgRepo;
 import com.talentnet.bugetsystem.Repository.Bline_DeptRepo;
 import com.talentnet.bugetsystem.Repository.BudgetDetailRepo;
@@ -50,11 +55,13 @@ import com.talentnet.bugetsystem.Repository.CriteriaRepo;
 import com.talentnet.bugetsystem.Repository.DeptRepo;
 import com.talentnet.bugetsystem.Repository.GroupRepo;
 import com.talentnet.bugetsystem.Repository.HistoricalAmountRepo;
+import com.talentnet.bugetsystem.Repository.MoreDetailRepo;
 import com.talentnet.bugetsystem.Repository.RoleRepo;
 import com.talentnet.bugetsystem.Repository.SystemroleRepo;
 import com.talentnet.bugetsystem.Repository.UserRepo;
 import com.talentnet.bugetsystem.Repository.UserroleRepo;
 import com.talentnet.bugetsystem.Repository.WbRepo;
+import com.talentnet.bugetsystem.Repository.YearRepo;
 
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
@@ -75,6 +82,8 @@ public class RestController {
 	@Autowired CriteriaDetailRepo cdRepo;
 	@Autowired CriteriaRepo criteriaRepo;
 	@Autowired HistoricalAmountRepo haRepo;
+	@Autowired MoreDetailRepo mdtRepo;
+	@Autowired YearRepo yearRepo;
 	
 	@RequestMapping(value = "/service/getwbbybl/{bline}", method = RequestMethod.GET)
 	public List<Wb> getWbByBl(@PathVariable("bline") int bline) {
@@ -83,10 +92,15 @@ public class RestController {
 	}
 	
 	@RequestMapping(value = "/service/summarybydept/{dept}", method = RequestMethod.GET)
-	public List<BudgetDetail> getBudgetByDept(@PathVariable("dept") int deptid){
+	public List<BudgetDetailDTO> getBudgetByDept(@PathVariable("dept") int deptid){
 		Dept dept = deptRepo.findByDeptid(deptid);
 		Budget budget = budgetRepo.findByDept(dept);
-		return bdRepo.findByBudget(budget);
+		List<BudgetDetail> bdList = bdRepo.findByBudget(budget);
+		List<BudgetDetailDTO> bdDTO = new ArrayList<>();
+		for(BudgetDetail bd : bdList) {
+			bdDTO.add(new BudgetDetailDTO(bd, mdtRepo.findByBudgetdetail(bd)));
+		}
+		return bdDTO;
 	}
 	
 	@RequestMapping(value = "service/budgetlinebydept/{dept}", method = RequestMethod.GET)
@@ -122,7 +136,7 @@ public class RestController {
 			Budget bg = new Budget();
 			bg.setDept(deptRepo.findByDeptid(budgets.get(0).getCdept()));
 			if(budgets.get(0).getRole().equals("REPORTER")) bg.setStatus(0);
-			if(budgets.get(0).getRole().equals("REVIEWER")) bg.setStatus(1);
+			else if(budgets.get(0).getRole().equals("REVIEWER")) bg.setStatus(1);
 			else bg.setStatus(2);
 			budgetRepo.save(bg);
 		}else {
@@ -135,15 +149,37 @@ public class RestController {
 							del = 0;
 							break;
 						}
-					}	
-				}
-				if(del ==1) {
-					bdRepo.delete(bd);
+					}
+					if(del ==1) {
+						mdtRepo.removeByBudgetdetail(bd);
+						bdRepo.delete(bd);
+					}
+				}		
+			}
+			for(BudgetDTO budget : budgets) {
+				if(budget.getId()!=null) {
+					List<MoreDetail> mdtList = mdtRepo.findByBudgetdetail(bdRepo.findByBdid(Integer.parseInt(budget.getId())));
+					for(MoreDetail mdt : mdtList) {
+						int delmdt = 1;
+						for(List<String> mdtDTO : budget.getMoredetail()) {
+							if(mdtDTO.get(0)!="0") {
+								if(mdt.getMdtid() == Integer.parseInt(mdtDTO.get(0))) {
+									delmdt = 0;
+									break;
+								}
+							}
+						}
+						if(delmdt ==1) {
+							mdtRepo.delete(mdt);
+						}
+					}			
 				}
 			}
 		}
-		List<BudgetDetail> saveList = new ArrayList<>(); 
+		List<BudgetDetail> bdsaveList = new ArrayList<>();
+		List<MoreDetail> mdtsaveList = new ArrayList<>();
 		for(BudgetDTO budget : budgets) {
+
 			BudgetDetail bgd = new BudgetDetail();
 			if(budget.getId()!=null) {
 				bgd.setBdid(Integer.parseInt(budget.getId()));
@@ -160,9 +196,20 @@ public class RestController {
 			}else {
 				bgd.setBg(bgRepo.findByBgid(Integer.parseInt(budget.getBg())));
 			}
-			saveList.add(bgd);
+			bdsaveList.add(bgd);
+			for(List<String> mdtDTO : budget.getMoredetail()) {
+				MoreDetail mdt = new MoreDetail();
+				if(mdtDTO.get(0)!="0") {
+					mdt.setMdtid(Integer.parseInt(mdtDTO.get(0)));
+				}
+				mdt.setBudgetdetail(bgd);
+				mdt.setAmount(Long.parseLong(mdtDTO.get(2)));
+				mdt.setDetail(mdtDTO.get(1));
+				mdtsaveList.add(mdt);
+			}
 		}
-		bdRepo.saveAll(saveList);
+		bdRepo.saveAll(bdsaveList);
+		mdtRepo.saveAll(mdtsaveList);
 		return "Saved!";
 	}
 	
@@ -259,12 +306,18 @@ public class RestController {
 		for(SysRoleDTO roles : userform.getRole()) {
 			if(roles.getRole()==1) {
 				UserRole urole = new UserRole();
+				if(!userroleRepo.findByGroup(groupRepo.findByGroupid(roles.getGroup())).isEmpty()) {
+					return "Reviewer For Group "+ groupRepo.findByGroupid(roles.getGroup()).getGroupcode()+" Existed!";
+				};
 				urole.setUser(userRepo.findByUsername(userform.getUsername()));
 				urole.setGroup(groupRepo.findByGroupid(roles.getGroup()));
 				urole.setSysrole(sysroleRepo.findByRoleid(1));
 				uroleList.add(urole);
 			}else {
 				UserRole urole = new UserRole();
+				if(!userroleRepo.findByDept(deptRepo.findByDeptid(roles.getDept())).isEmpty()) {
+					return "Reporter For Dept "+ deptRepo.findByDeptid(roles.getDept()).getDeptname()+" Existed!";
+				};
 				urole.setUser(userRepo.findByUsername(userform.getUsername()));
 				urole.setDept(deptRepo.findByDeptid(roles.getDept()));
 				urole.setSysrole(sysroleRepo.findByRoleid(2));
@@ -307,23 +360,29 @@ public class RestController {
 			user.setFullname(userform.getFullname());
 			userRepo.save(user);
 		}
+		userroleRepo.removeByUser(user);
 		List<UserRole> uroleList = new ArrayList<>();
 		for(SysRoleDTO roles : userform.getRole()) {
 			if(roles.getRole()==1) {
 				UserRole urole = new UserRole();
+				if(userroleRepo.findByGroup(groupRepo.findByGroupid(roles.getGroup())).size()>1) {
+					return "Reviewer For Group "+ groupRepo.findByGroupid(roles.getGroup()).getGroupcode()+" Existed!";
+				};
 				urole.setUser(userRepo.findByUsername(userform.getUsername()));
 				urole.setGroup(groupRepo.findByGroupid(roles.getGroup()));
 				urole.setSysrole(sysroleRepo.findByRoleid(1));
 				uroleList.add(urole);
 			}else {
 				UserRole urole = new UserRole();
+				if(userroleRepo.findByDept(deptRepo.findByDeptid(roles.getDept())).size()>1) {
+					return "Reporter For Dept "+ deptRepo.findByDeptid(roles.getDept()).getDeptname()+" Existed!";
+				};
 				urole.setUser(userRepo.findByUsername(userform.getUsername()));
 				urole.setDept(deptRepo.findByDeptid(roles.getDept()));
 				urole.setSysrole(sysroleRepo.findByRoleid(2));
 				uroleList.add(urole);
 			}
 		}
-		userroleRepo.removeByUser(user);
 		userroleRepo.saveAll(uroleList);
 		return "Account Edited Successfully!";
 
@@ -667,6 +726,14 @@ public class RestController {
 	@RequestMapping(value="/service/editbline", method = RequestMethod.POST)
 	public String editBline(@RequestBody List<String> bline) {		
 		BudgetLine budgetline = blRepo.findByBlid(Integer.parseInt(bline.get(0)));
+		if(budgetline.getBlcode().equals(bline.get(1)) && !budgetline.getBlname().equals(bline.get(2))) {
+			if(blRepo.findByBlname(bline.get(1))!=null) return "Budget Line Name existed!";
+		}else if(budgetline.getBlname().equals(bline.get(2)) && !budgetline.getBlcode().equals(bline.get(1))){
+			if(blRepo.findByBlname(bline.get(1))!=null) return "Budget Line Name existed!";
+		}else if(!budgetline.getBlname().equals(bline.get(2)) && !budgetline.getBlcode().equals(bline.get(1))){
+			if(blRepo.findByBlcode(bline.get(0))!=null) return "Budget Line Code existed!";
+			if(blRepo.findByBlname(bline.get(1))!=null) return "Budget Line Name existed!";
+		}
 		budgetline.setBlcode(bline.get(1));
 		budgetline.setBlname(bline.get(2));
 		blRepo.save(budgetline);
@@ -676,6 +743,14 @@ public class RestController {
 	@RequestMapping(value="/service/editwb", method = RequestMethod.POST)
 	public String editWb(@RequestBody List<String> wb) {		
 		Wb wb1 = wbRepo.findByWbid(Integer.parseInt(wb.get(0)));
+		if(wb1.getWbcode().equals(wb.get(1)) && !wb1.getWbname().equals(wb.get(2))) {
+			if(wbRepo.findByBlineAndWbname(blRepo.findByBlid(Integer.parseInt(wb.get(0))), wb.get(2))!=null) return "WB Name existed!";
+		}else if(!wb1.getWbcode().equals(wb.get(1)) && wb1.getWbname().equals(wb.get(2))) {
+			if(wbRepo.findByBlineAndWbcode(blRepo.findByBlid(Integer.parseInt(wb.get(0))), wb.get(1))!=null) return "WB Code existed!";
+		}else if(!wb1.getWbcode().equals(wb.get(1)) && !wb1.getWbname().equals(wb.get(2))) {
+			if(wbRepo.findByBlineAndWbcode(blRepo.findByBlid(Integer.parseInt(wb.get(0))), wb.get(1))!=null) return "WB Code existed!";
+			if(wbRepo.findByBlineAndWbname(blRepo.findByBlid(Integer.parseInt(wb.get(0))), wb.get(2))!=null) return "WB Name existed!";
+		}
 		wb1.setWbcode(wb.get(1));
 		wb1.setWbname(wb.get(2));
 		wbRepo.save(wb1);
@@ -685,6 +760,14 @@ public class RestController {
 	@RequestMapping(value="/service/editbg", method = RequestMethod.POST)
 	public String editBg(@RequestBody List<String> bg) {		
 		Bg bg1 = bgRepo.findByBgid(Integer.parseInt(bg.get(0)));
+		if(bg1.getBgcode().equals(bg.get(1)) && !bg1.getBgname().equals(bg.get(2))){
+			if(bgRepo.findByWbAndBgname(wbRepo.findByWbid(Integer.parseInt(bg.get(0))), bg.get(2))!=null) return "BG Name existed!";
+		}else if(!bg1.getBgcode().equals(bg.get(1)) && bg1.getBgname().equals(bg.get(2))){
+			if(bgRepo.findByWbAndBgcode(wbRepo.findByWbid(Integer.parseInt(bg.get(0))), bg.get(1))!=null) return "BG Code existed!";
+		}else if(!bg1.getBgcode().equals(bg.get(1)) && !bg1.getBgname().equals(bg.get(2))){
+			if(bgRepo.findByWbAndBgcode(wbRepo.findByWbid(Integer.parseInt(bg.get(0))), bg.get(1))!=null) return "BG Code existed!";
+			if(bgRepo.findByWbAndBgname(wbRepo.findByWbid(Integer.parseInt(bg.get(0))), bg.get(2))!=null) return "BG Name existed!";
+		}
 		bg1.setBgcode(bg.get(1));
 		bg1.setBgname(bg.get(2));
 		bgRepo.save(bg1);
@@ -806,6 +889,7 @@ public class RestController {
 	@RequestMapping(value = "/service/hatool", method = RequestMethod.POST)
 	public List<Long> historicalamounttool(@RequestBody List<List<String>> datas) {
 		List<Long> result = new ArrayList<>();
+		if(datas.size()==0) return result;
 		if(datas.get(0).size()==3) {
 			for(List<String> data : datas) {
 				Dept dept = deptRepo.findByDeptid(Integer.parseInt(data.get(0)));
@@ -813,7 +897,7 @@ public class RestController {
 				Integer percent = Integer.parseInt(data.get(2));
 				HistoricalAmount ha = haRepo.findByWbcodeAndSponsor(bline.getBlcode(), dept.getDeptcode());
 				if(ha == null) result.add((long) 0);
-				else result.add(ha.getAmount()*percent/100);
+				else result.add(ha.getAmount()*(percent/100 + 1));
 			}
 		}else {
 			if(datas.get(0).get(2).equals("0")) {
@@ -822,14 +906,15 @@ public class RestController {
 					BudgetLine bline = blRepo.findByBlid(Integer.parseInt(data.get(1)));
 					Long cost = Long.parseLong(data.get(3));
 					HistoricalAmount ha = haRepo.findByWbcodeAndSponsor(bline.getBlcode(), dept.getDeptcode());
-					HistoricalAmount total = haRepo.findByWbcodeAndSponsor("TOTAL", dept.getDeptcode());
+					HistoricalAmount total = haRepo.findByWbcodeAndSponsor(bline.getBlcode(), "TOTAL");
 					if(ha == null) result.add((long) 0);
+					if(total.getAmount()==0) result.add((long) 0);
 					else result.add(cost*ha.getAmount()/total.getAmount());
 				}
 			}else {
 				for(List<String> data : datas) {
 					Dept dept = deptRepo.findByDeptid(Integer.parseInt(data.get(0)));
-					BudgetLine  bline = blRepo.findByBlid(Integer.parseInt(data.get(1)));
+					//BudgetLine  bline = blRepo.findByBlid(Integer.parseInt(data.get(1)));
 					Criteria crt = criteriaRepo.findByCriteriaid(Integer.parseInt(data.get(2)));
 					Long cost = Long.parseLong(data.get(3));
 					Integer total = 0;
@@ -851,6 +936,23 @@ public class RestController {
 			
 		}
 		return result;
+	}
+	
+	@RequestMapping(value = "/admin/refresh", method = RequestMethod.GET)
+	@Transactional
+	public String refresh() {
+		mdtRepo.deleteAll();
+		bdRepo.deleteAll();
+		budgetRepo.deleteAll();
+		haRepo.deleteAll();
+		yearRepo.deleteAll();
+		Calendar now = Calendar.getInstance();
+		Date date = Date.valueOf((now.get(Calendar.YEAR)+1)+"-12-31");
+		Year year = new Year();
+		year.setYear(date);
+		yearRepo.save(year);
+		
+		return "Refresh Successful!" + date.toString();
 	}
 
 }

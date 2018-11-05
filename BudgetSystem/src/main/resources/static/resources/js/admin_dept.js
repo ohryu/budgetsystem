@@ -32,6 +32,7 @@ $(document).ready(function() {
 		$("#dept").empty();
 		$.ajax({
 			type: "GET",
+			async: false,
 			url : "/service/getdepts",
 			success : function(data){
 				$.each(data, function(key, val){
@@ -137,8 +138,10 @@ $(document).ready(function() {
 			    		data: JSON.stringify([$("#edit-comp-compname").val(), comp.attr("data-comp-id")]),
 						accept: 'text/plain',
 						success : function(data){
-							if(data.indexOf("Successfully")>-1)
+							if(data.indexOf("Successfully")>-1){
 								getData();
+								$("#edit-comp-close").trigger("click");
+							}
 							else alert(data);
 						},
 						error: function(e){
@@ -169,8 +172,10 @@ $(document).ready(function() {
 			    		data: JSON.stringify([$("#edit-group-groupcode").val(), group.attr("data-group-id")]),
 						accept: 'text/plain',
 						success : function(data){
-							if(data.indexOf("Successfully")>-1)
+							if(data.indexOf("Successfully")>-1){
 								getData();
+								$("#edit-group-close").trigger("click");
+							}
 							else alert(data);
 						},
 						error: function(e){
@@ -214,6 +219,7 @@ $(document).ready(function() {
 						success : function(data){
 							if(data.indexOf("Successfully")>-1){
 								getData();
+								$("#edit-dept-close").trigger("click");
 							}
 							else alert(data);
 						},	
@@ -285,8 +291,10 @@ $(document).ready(function() {
 					accept: 'text/plain',
 					success : function(data){
 						console.log(data);
-						if(data.indexOf("Successfully")>-1)
+						if(data.indexOf("Successfully")>-1){
 							getData();
+							$("#add-close").trigger("click");
+						}
 						else alert(data);
 					},	
 					error: function(e){

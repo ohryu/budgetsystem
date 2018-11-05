@@ -21,7 +21,7 @@
 		<select id="company">
 			<option th:each="company : ${companies}" th:text="${company.getCompanyname()}" th:value="${company.getCompanyid()}"></option>
 		</select>
-		<button type="button" class="btn btn-info btn-lg"
+		<button th:if="${userInfo[1]=='NOT'}" type="button" class="btn btn-info btn-lg"
 								data-toggle="modal" data-target="#addModal">
 								Add Historical Amount
 							</button>

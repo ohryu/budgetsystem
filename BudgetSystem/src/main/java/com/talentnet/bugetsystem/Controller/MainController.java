@@ -38,6 +38,7 @@ import com.talentnet.bugetsystem.Repository.SystemroleRepo;
 import com.talentnet.bugetsystem.Repository.UserRepo;
 import com.talentnet.bugetsystem.Repository.UserroleRepo;
 import com.talentnet.bugetsystem.Repository.WbRepo;
+import com.talentnet.bugetsystem.Repository.YearRepo;
 
 @Controller
 public class MainController {
@@ -52,7 +53,7 @@ public class MainController {
 	@Autowired GroupRepo groupRepo;
 	@Autowired CompanyRepo companyRepo;
 	@Autowired CriteriaRepo criteriaRepo;
-	
+	@Autowired YearRepo yearRepo;
 
 	@RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
 	public String loginPage(Model model) {
@@ -111,11 +112,29 @@ public class MainController {
 		}
 		
 		model.addAttribute("companydepts", companydtos);
+		model.addAttribute("date", yearRepo.findAll().get(0));
+		List<Criteria> criterias = criteriaRepo.findAll();
+		model.addAttribute("criterias", criterias);
 		return "summary";
 	}
 	
 	@RequestMapping(value = "/admin/histoticalamount", method = RequestMethod.GET)
-	public String history(Model model, Principal principal) {
+	public String adminHistory(Model model, Principal principal) {
+		String userName = principal.getName();
+		System.out.println("User Name: " + userName);
+		List<String> userInfo = new ArrayList<>();
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
+		List<Company> companies = companyRepo.findAll();
+		model.addAttribute("companies", companies);
+		model.addAttribute("userInfo", userInfo);
+		List<Criteria> criterias = criteriaRepo.findAll();
+		model.addAttribute("criterias", criterias);
+		return "admin_historical_amount";
+	}
+	
+	@RequestMapping(value = "/user/histoticalamount", method = RequestMethod.GET)
+	public String userHistory(Model model, Principal principal) {
 		String userName = principal.getName();
 		System.out.println("User Name: " + userName);
 		List<String> userInfo = new ArrayList<>();
@@ -177,6 +196,7 @@ public class MainController {
 		model.addAttribute("companydepts", companydtos);
 		List<Criteria> criterias = criteriaRepo.findAll();
 		model.addAttribute("criterias", criterias);
+		model.addAttribute("date", yearRepo.findAll().get(0));
 		return "summary";
 	}
 	
@@ -223,6 +243,7 @@ public class MainController {
 		model.addAttribute("companydepts", companydtos);
 		List<Criteria> criterias = criteriaRepo.findAll();
 		model.addAttribute("criterias", criterias);
+		model.addAttribute("date", yearRepo.findAll().get(0));
 		return "summary";
 	}
 	@RequestMapping(value = "/admin/account", method = RequestMethod.GET)

@@ -1,6 +1,8 @@
 $(document).ready(function() {
 	var group;
 	var detail;
+	var redirect = 1;
+	var isEditting = 0;
 	$.ajax({
 		type : "GET",
 		url : "/service/getallwb",
@@ -17,6 +19,8 @@ $(document).ready(function() {
 		url : "/service/getallbg",
 		success : function(data){
 			detail = data;
+			//click first dept-------------------------------------------------------------------------------------------------------------------
+		    $("div a.dept").first().trigger("click");
 		},
 		error : function(e) {
 			alert("System error, please try again!");
@@ -42,25 +46,27 @@ $(document).ready(function() {
 				if($("#all").prop('checked') == true){
 					$(".sponsor").each(function (){
 						row = '<tr class="budget-row">\
-						  			<td class="control-dept" data-dept-id="'+$("#c-dept").attr("data-dept-id")+'">FAD</td>\
-						  			<td class="sponsor-dept" data-dept-id="'+$(this).val()+'">'+$(this).attr("name")+'</td>\
+						  			<td class="control-dept" data-dept-id="'+$("#c-dept").attr("data-dept-id")+'" data-dept-code="'+$("#c-dept").attr("data-dept-code")+'">'+$("#c-dept").text()+'</td>\
+						  			<td class="sponsor-dept" data-dept-id="'+$(this).val()+'" data-dept-code="'+$(this).attr("data-dept-code")+'">'+$(this).attr("name")+'</td>\
 						  			<td class="bl" data-bl-id="'+$('#bg-line').val()+'">'+$('#bg-line option:selected').text()+'</td>\
 						  			<td>\
 						  				<select class="wb">\
 											<option value="NEW">NEW</option>';
 									$.each(data, function(key, val){
-									  row+='<option value="'+val.wbid+'">'+val.wbname+'</option>'
+									  row+='<option value="'+val.wbid+'" data-wb-code="'+val.wbcode+'">'+val.wbname+'</option>';
 									}) 					
 						 
 									row+='</select>\
 						  			</td>\
 							 		<td><input type="text" class="bg" size="10"></td>\
-						  			<td></td>\
+						  			<td class="code">NEW</td>\
 						  			<td><input type="text" class="bg-amount" size="10"></td>\
-						  			<td><input type="date" class="time-allocate" size="10"></td>\
-						  			<td><input type="date" class="start-time" size="10"></td>\
+						  			<td><input type="number" class="time-allocate" value="12"></td>\
+						  			<td><input type="date" class="start-time" size="10" value="2019-01-01"></td>\
 						  			<td><input type="text" class="expense" size="10"></td>\
-						  			<td><input type="button" class="delete-btn" name="" value="Delete"></td>\
+						  			<td><input type="button" class="btn btn-info delete-btn" name="" value="Delete">\
+						 				<input type="button" class="btn btn-info add-detail-btn" name="" value="Add Detail">\
+									</td>\
 							 		<td><input type="checkbox" class=usetool></td>';		
 						row+='</tr>';
 						$(".summary table tbody").append(row);
@@ -68,24 +74,26 @@ $(document).ready(function() {
 				}else{
 					$(".sponsor:checked").each(function(){
 						row = '<tr class="budget-row">\
-						  			<td class="control-dept" data-dept-id="'+$("#c-dept").attr("data-dept-id")+'">FAD</td>\
-						  			<td class="sponsor-dept" data-dept-id="'+$(this).val()+'">'+$(this).attr("name")+'</td>\
+						  			<td class="control-dept" data-dept-id="'+$("#c-dept").attr("data-dept-id")+'" data-dept-code="'+$("#c-dept").attr("data-dept-code")+'">'+$("#c-dept").text()+'</td>\
+						  			<td class="sponsor-dept" data-dept-id="'+$(this).val()+'" data-dept-code="'+$(this).attr("data-dept-code")+'">'+$(this).attr("name")+'</td>\
 						  			<td class="bl" data-bl-id="'+$('#bg-line').val()+'">'+$('#bg-line option:selected').text()+'</td>\
 						  			<td>\
 						  				<select class="wb">\
 					  						<option value="NEW">NEW</option>';
 						 			$.each(data, function(key, val){
-							 		  row+='<option value="'+val.wbid+'">'+val.wbname+'</option>'
+							 		  row+='<option value="'+val.wbid+'" data-wb-code="'+val.wbcode+'">'+val.wbname+'</option>'
 						 			}) 					
 						 			row+='</select>\
 						  			</td>\
 						 			<td><input type="text" class="bg" size="10"></td>\
-							  		<td></td>\
+							  		<td class="code">NEW</td>\
 							  		<td><input type="text" class="bg-amount" size="10"></td>\
-							  		<td><input type="date" class="time-allocate" size="10"></td>\
-							  		<td><input type="date" class="start-time" size="10"></td>\
+							  		<td><input type="number" class="time-allocate" value="12"></td>\
+							  		<td><input type="date" class="start-time" size="10" value="2019-01-01"></td>\
 							  		<td><input type="text" class="expense" size="10"></td>\
-							  		<td><input type="button" class="delete-btn" name="" value="Delete"></td>\
+							  		<td><input type="button" class="btn btn-info delete-btn" name="" value="Delete">\
+						 				<input type="button" class="btn btn-info add-detail-btn" name="" value="Add Detail">\
+						 			</td>\
 								 	<td><input type="checkbox" class=usetool></td>';		
 						row+='</tr>';
 						$(".summary table tbody").append(row);
@@ -109,145 +117,217 @@ $(document).ready(function() {
     
 //select dept-------------------------------------------------------------------------------------------------------
     $("body").off("click", ".dept").on("click", ".dept", function(){
-    	$("tbody").empty();
-    	$("#c-dept").attr("data-dept-id",$(this).attr("data-dept-id"));
-		$("#c-dept").text($(this).text());
-		//get budget in DB
-    	$.ajax({
-    		type : "GET",
-			url : '/service/summarybydept/' + $(this).attr("data-dept-id"),
-			success : function(data) {
-				$.each(data, function(key, val){
-					row = '<tr class="budget-row" data-bd-id="'+val.bdid+'">\
-			  			<td class="control-dept" data-dept-id="'+val.budget.dept.deptid+'">'+val.budget.dept.deptname+'</td>\
-			  			<td class="sponsor-dept" data-dept-id="'+val.dept.deptid+'">'+val.dept.deptname+'</td>\
-			  			<td class="bl" data-bl-id="'+val.bline.blid+'" data-bl-name='+val.bline.blname+'">'+val.bline.blname+'</td>\
-			  			<td><select class="wb">';
-					row+='<option value="NEW" selected>NEW</option>';
-			  		if(val.bg==null){
-			  			$.each(group, function(key1, val1){
-							if(val1.bline.blid == val.bline.blid)
-								row+='<option value="'+val1.wbid+'">'+val1.wbname+'</option>'
-						});
-			  		}else{
-						$.each(group, function(key1, val1){
-							if(val1.bline.blid == val.bline.blid){
-								if(val1.wbid == val.bg.wb.wbid){
-									row+='<option value="'+val1.wbid+'" selected>'+val1.wbname+'</option>';
+    	if(redirect!=0){
+	    	$("tbody").empty();
+	    	$("#c-dept").attr("data-dept-id",$(this).attr("data-dept-id"));
+	    	$("#c-dept").attr("data-dept-code",$(this).attr("data-dept-code"));
+			$("#c-dept").text($(this).text());
+			//get budget in DB
+	    	$.ajax({
+	    		type : "GET",
+				url : '/service/summarybydept/' + $(this).attr("data-dept-id"),
+				success : function(data) {
+					$.each(data, function(key, val){
+						var wbid;
+						row = '<tr class="budget-row" data-bd-id="'+val.bd.bdid+'">\
+				  			<td class="control-dept" data-dept-id="'+val.bd.budget.dept.deptid+'" data-dept-code="'+val.bd.budget.dept.deptcode+'">'+val.bd.budget.dept.deptname+'</td>\
+				  			<td class="sponsor-dept" data-dept-id="'+val.bd.dept.deptid+'" data-dept-code="'+val.bd.dept.deptcode+'">'+val.bd.dept.deptname+'</td>\
+				  			<td class="bl" data-bl-id="'+val.bd.bline.blid+'" data-bl-name='+val.bd.bline.blname+'">'+val.bd.bline.blname+'</td>\
+				  			<td><select class="wb">';
+						row+='<option value="NEW">NEW</option>';
+				  		if(val.bd.bg==null){
+				  			$.each(group, function(key1, val1){
+								if(val1.bline.blid == val.bd.bline.blid)
+									row+='<option value="'+val1.wbid+'" data-wb-code="'+val1.wbcode+'">'+val1.wbname+'</option>'
+							});
+				  		}else{
+							$.each(group, function(key1, val1){
+								if(val1.bline.blid == val.bd.bline.blid){
+									if(val1.wbid == val.bd.bg.wb.wbid){
+										row+='<option value="'+val1.wbid+'" data-wb-code="'+val1.wbcode+'" selected>'+val1.wbname+'</option>';
+										wbid = val1.wbid;
+									}
+									else{
+										row+='<option value="'+val1.wbid+'">'+val1.wbname+'</option>'
+									}
 								}
-								else{
-									row+='<option value="'+val1.wbid+'">'+val1.wbname+'</option>'
+							});
+				  		}
+						row+='</select></td>';
+				 		row+='<td>';
+						if(val.bd.bg==null){
+							row+='<input type="text" class="bg" value="'+val.bd.newdetail+'"></td>'
+							row+='<td class="code">NEW</td>';
+						}
+						else{
+							row+='<select class="bg" width=10>';
+							$.each(detail, function(key1, val1){
+								if(val1.wb.wbid==wbid){
+									if(val.bd.bg.bgid==val1.bgid){
+										row+='<option value="'+val1.bgid+'" data-bg-code="'+val1.bgcode+'" selected>'+val1.bgname+'</option>'
+									}else{
+										row+='<option value="'+val1.bgid+'" data-bg-code="'+val1.bgcode+'">'+val1.bgname+'</option>'
+									}
 								}
-							}
-						});
-			  		}
-					row+='</select></td>';
-			 		row+='<td>';
-					if(val.bg==null){
-						row+='<input type="text" class="bg" value="'+val.newdetail+'"></td>'
-						row+='<td>'+val.budget.dept.deptcode+'-'+val.dept.deptcode+'-NEW</td>';
-					}
-					else{
-						row+='<select class="bg">';
-						$.each(detail, function(key1, val1){
-							if(val.bg.bgid==val1.bgid){
-								row+='<option value="'+val1.bgid+'" selected>'+val1.bgname+'</option>'
-							}else{
-								row+='<option value="'+val1.bgid+'">'+val1.bgname+'</option>'
-							}
-						});
-						row+='<td>'+val.budget.dept.deptcode+'-'+val.dept.deptcode+'-'+val.bg.wb.wbcode+'-'+val.bg.bgcode+'</td>';
-					}
-					row+='\
-				  		<td><input type="text" class="bg-amount" size="10" value="'+val.amount+'"></td>\
-				  		<td><input type="date" class="time-allocate" size="10" value="'+val.allocationtime+'"></td>\
-				  		<td><input type="date" class="start-time" size="10" value="'+val.starttime+'"></td>\
-				  		<td><input type="text" class="expense" size="10" value="'+val.expense+'"></td>\
-				  		<td><input type="button" class="delete-btn" name="" value="Delete"></td>\
-					 	<td><input type="checkbox" class=usetool></td>';		
-			 		row+='</tr>';
-			 		$("tbody").append(row);
-				});
-				if(data.length==0){
-					$("#add-btn").attr('disabled', 'disabled');
-					$("#submit-tool").attr('disabled', 'disabled');
-					$("#save").attr('disabled', 'disabled');
-					$("#submit").attr('disabled', 'disabled');
-					$("#reject").attr('disabled', 'disaled');
-				}else if(($("#sysrole").val()=="REPORTER" && data[0].budget.status!=0) || ($("#sysrole").val()=="REVIEWER" && data[0].budget.status!=1) || ($("#sysrole").val()=="NOT" && data[0].budget.status!=2)){
-					$("#add-btn").attr('disabled', 'disabled');
-					$("#submit-tool").attr('disabled', 'disabled');
-					$("#edit").attr('disabled', 'disabled');
-					$("#save").attr('disabled', 'disabled');
-					$("#reject").attr('disabled');
-				}else if(($("#sysrole").val()=="REPORTER" && data[0].budget.status==0) || ($("#sysrole").val()=="REVIEWER" && data[0].budget.status==1) || ($("#sysrole").val()=="NOT" && data[0].budget.status==2)){
-					$("#add-btn").attr('disabled', 'disabled');
-					$("#submit-tool").attr('disabled', 'disabled');
-					$("#edit").attr('disabled', 'disabled');
-					$("#save").attr('disabled', 'disabled');
-					$("#reject").removeAttr('disabled');
-				}
-				$("tbody tr input, select, #add-btn, #save, #submit-tool").attr('disabled', 'disaled');
-			},
-			error : function(e) {
-				alert("System error, please try again!");
-				console.log("ERROR : ", e);
-			}
-    	});
-    	//get budget line----------------------------------------------------------------------------------------------------------
-    	$.ajax({
-    		type : "GET",
-			url : '/service/budgetlinebydept/' + $(this).attr("data-dept-id"),
-			success : function(data) {
-				$("#bg-line").empty();
-				$.each(data, function(key, val){
-					$("#bg-line").append("<option value='"+val.bline.blid+"'>"+val.bline.blname+"</option>");               
-	            });
-			},
-			error : function(e) {
-				alert("System error, please try again!");
-				console.log("ERROR : ", e);
-			}
-    	});
-    	//get sponsor--------------------------------------------------------------------------------------------------------------
-    	$.ajax({
-    		type : "GET",
-			url : '/service/sponsorbydept/' + $(this).attr("data-dept-id"),
-			success : function(data) {
-				$("#s-dept").empty();
-				$("#s-dept").append('<label>All:&nbsp;&nbsp;</label>');
-				$("#s-dept").append('<input id="all" type="checkbox">ALL<br>');
-				$.each(data, function(key, val){
-					$("#s-dept").append("<label>"+val[0].group.groupcode+":&nbsp;&nbsp;</label>");
-					$.each(val , function(key1, val1){
-						$("#s-dept").append('<input class="sponsor" value="'+val1.deptid+'" name="'+val1.deptname+'" type="checkbox">'+val1.deptname+'&nbsp;&nbsp;');
+							});
+							row+='<td class="code">'+val.bd.budget.dept.deptcode+'-'+val.bd.dept.deptcode+'-'+val.bd.bg.wb.wbcode+'-'+val.bd.bg.bgcode+'</td>';
+						}
+						row+='\
+					  		<td><input type="text" class="bg-amount" size="10" value="'+val.bd.amount+'"></td>\
+					  		<td><input type="number" class="time-allocate" value="'+val.bd.allocationtime+'"></td>\
+					  		<td><input type="date" class="start-time" size="10" value="'+val.bd.starttime+'"></td>\
+					  		<td><input type="text" class="expense" size="10" value="'+val.bd.expense+'"></td>\
+					  		<td><input type="button" class="btn btn-info delete-btn" name="" value="Delete">\
+					  			<input type="button" class="btn btn-info add-detail-btn" name="" value="Add Detail">\
+					  		</td>\
+						 	<td><input type="checkbox" class=usetool></td>';		
+				 		row+='</tr>';
+				 		$.each(val.detailList, function(key1, val1){
+				 			row += '<tr class="more-detail" data-mdt-id="'+val1.mdtid+'">\
+							 			<td colspan=4></td><td>\
+											<input type="text" class="mdt-detail" value="'+val1.detail+'">\
+										</td><td></td>\
+										<td><input type="text" class="mdt-amount" value="'+val1.amount+'" size="10">\</td>\
+										<td colspan=3></td><td><input type="button" class="btn btn-info mdt-remove" value="Delete"></td>\
+				 					</tr>';
+				 		})
+				 		$("tbody").append(row);	
 					});
-					$("#s-dept").append('<br>');
-	            });
-			},
-			error : function(e) {
-				alert("System error, please try again!");
-				console.log("ERROR : ", e);
-			}
-    	});
-    	$("#close").click();
+					if(data.length==0){
+						$("#edit").removeAttr('disabled');
+						$("#add-btn").attr('disabled', 'disabled');
+						$("#submit-tool").attr('disabled', 'disabled');
+						$("#save").attr('disabled', 'disabled');
+						$("#submit").attr('disabled', 'disabled');
+						$("#reject").attr('disabled', 'disaled');
+					}else if(($("#sysrole").val()=="REPORTER" && data[0].bd.budget.status!=0) || ($("#sysrole").val()=="REVIEWER" && data[0].bd.budget.status!=1) || ($("#sysrole").val()=="NOT" && data[0].bd.budget.status!=2)){
+						$("#add-btn").attr('disabled', 'disabled');
+						$("#submit-tool").attr('disabled', 'disabled');
+						$("#submit").attr('disabled', 'disabled');
+						$("#edit").attr('disabled', 'disabled');
+						$("#save").attr('disabled', 'disabled');
+						$("#reject").attr('disabled');
+					}else if(($("#sysrole").val()=="REPORTER" && data[0].bd.budget.status==0) || ($("#sysrole").val()=="REVIEWER" && data[0].bd.budget.status==1) || ($("#sysrole").val()=="NOT" && data[0].bd.budget.status==2)){
+						$("#edit").removeAttr('disabled');
+						$("#submit").removeAttr('disabled');
+						$("#add-btn").attr('disabled', 'disabled');
+						$("#submit-tool").attr('disabled', 'disabled');
+						$("#save").attr('disabled', 'disabled');
+						$("#reject").removeAttr('disabled');
+					}
+					$("tbody tr input, select, #add-btn, #save, #submit-tool").attr('disabled', 'disaled');
+				},
+				error : function(e) {
+					alert("System error, please try again!");
+					console.log("ERROR : ", e);
+				}
+	    	});
+	    	
+	    	//add child-detail------------------------------------------------------------------------------------------------
+	    	$("body").off("click", ".add-detail-btn").on("click", ".add-detail-btn",function(){
+	 			row1 = $(this).closest("tr");
+	 			row1.find(".usetool").attr('disabled','disabled');
+	 			
+	 			var newRow = $("<tr>")
+	 			newRow.attr("class","more-detail");
+	 			newRow.attr("data-mdt-id","0");
+	 			newRow.css("background-color","white");
+		 		newRow.append('<td colspan=4></td><td>\
+		 							<input type="text" class="mdt-detail" value="No detail">\
+		 						</td><td></td>\
+		 						<td><input type="text" class="mdt-amount" data-mdt-id="0" value="0" size="10">\</td>\
+		 						<td colspan=3></td><td><button class="btn btn-info mdt-remove">Delete</button></td>');
+	 			row1.after(newRow);
+	 		})
+	 		
+	 		$("body").off("click", ".mdt-remove").on("click", ".mdt-remove",function(){
+	 			bgrow = $(this).closest("tr").prevAll("tr.budget-row").first();
+	 			$(this).closest("tr").remove();
+	 			total = 0;
+	 			if(bgrow.nextUntil(".budget-row").length == 0){
+	 				bgrow.find(".usetool").removeAttr("disabled");
+	 			}else{
+		 			bgrow.nextUntil(".budget-row").each(function(key, row1){
+		 				total += Number(row1.children[3].children[0].value);
+		 			})
+	 			}
+	 			bgrow.find(".bg-amount").val(total);
+	 		})
+	 		
+	 		$("body").on("focusout", ".mdt-amount", function(){
+	 			bgrow = $(this).closest("tr").prevAll("tr.budget-row").first();
+	 			total = 0;
+	 			bgrow.nextUntil(".budget-row").each(function(key, row1){
+	 				total = total + Number(row1.children[3].children[0].value);
+	 			})
+	 			bgrow.find(".bg-amount").val(total);
+	 			
+	 			expense = bgrow.find(".expense");
+	 	    	var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+	 	    	var firstDate = new Date($("#submit-tool").attr("data-date"));
+	 	    	var secondDate = new Date(bgrow.find(".start-time").val());
+	
+	 	    	var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+	 	    	if($.isNumeric(diffDays)){
+	 	    		expense.val(parseInt((diffDays/30)*(Number(bgrow.find(".bg-amount").val())/bgrow.find(".time-allocate").val())));
+	 	    	}
+	 		})
+	 		
+	    	//get budget line----------------------------------------------------------------------------------------------------------
+	    	$.ajax({
+	    		type : "GET",
+				url : '/service/budgetlinebydept/' + $(this).attr("data-dept-id"),
+				success : function(data) {
+					$("#bg-line").empty();
+					$.each(data, function(key, val){
+						$("#bg-line").append("<option value='"+val.bline.blid+"'>"+val.bline.blname+"</option>");               
+		            });
+				},
+				error : function(e) {
+					alert("System error, please try again!");
+					console.log("ERROR : ", e);
+				}
+	    	});
+	    	//get sponsor--------------------------------------------------------------------------------------------------------------
+	    	$.ajax({
+	    		type : "GET",
+				url : '/service/sponsorbydept/' + $(this).attr("data-dept-id"),
+				success : function(data) {
+					$("#s-dept").empty();
+					$("#s-dept").append('<label>All:&nbsp;&nbsp;</label>');
+					$("#s-dept").append('<input id="all" type="checkbox">ALL<br>');
+					$.each(data, function(key, val){
+						$("#s-dept").append("<label>"+val[0].group.groupcode+":&nbsp;&nbsp;</label>");
+						$.each(val , function(key1, val1){
+							$("#s-dept").append('<input class="sponsor" value="'+val1.deptid+'" data-dept-code="'+val1.deptcode+'" type="checkbox" name="'+val1.deptname+'">'+val1.deptname+'&nbsp;&nbsp;');
+						});
+						$("#s-dept").append('<br>');
+		            });
+				},
+				error : function(e) {
+					alert("System error, please try again!");
+					console.log("ERROR : ", e);
+				}
+	    	});
+	    	$("#close").click();
+    	}
     });
-    
-//click first dept-------------------------------------------------------------------------------------------------------------------
-    $("div a.dept").first().trigger("click");
     
 //delete row-------------------------------------------------------------------------------------------------------------------------
     $("body").off("click", ".delete-btn").on("click", ".delete-btn", function(){
-    	 $(this).closest("tr").remove();
+    	$(this).closest("tr").nextUntil(".budget-row").remove(); 
+    	$(this).closest("tr").remove();
     });
     
 //get bg by wb-----------------------------------------------------------------------------------------------------------------------
-    $("body").on("change", "select.wb", function(){
+    $("body").on("change paste keyup", "select.wb", function(){
     	var nexttd = $(this).closest("td").next();
+    	var row = $(this).closest("tr");
     	if($(this).val()=="NEW"){
     		nexttd.empty();
     		nexttd.append('<input type="text" class="bg" size="10">');
-    		nexttd.next().find("input").val($("#c-dept").text()+"-"+$("#s-dept").text+"NEW");
+    		row.find(".code").empty();
+    		row.find(".code").html("NEW");
     	}else{
     		$.ajax({
         		type : "GET",
@@ -256,10 +336,17 @@ $(document).ready(function() {
     				nexttd.empty();
     				dropdown = '<select class="bg">';
     				$.each(data, function(key, val){
-    					dropdown+='<option value="'+val.bgid+'">'+val.bgname+'</option>';
+    					dropdown+='<option value="'+val.bgid+'" data-bg-code="'+val.bgcode+'">'+val.bgname+'</option>';
     				});
     				dropdown+=('</select>');
     				nexttd.append(dropdown);
+    				code="";
+    				code+=row.find(".control-dept").attr("data-dept-code")+"-";
+    	    		code+=row.find(".sponsor-dept").attr("data-dept-code")+"-";
+    	    		code+=row.find(".wb option:selected").attr("data-wb-code")+"-";
+    	    		code+=row.find(".bg option:selected").attr("data-bg-code");
+    	    		row.find(".code").empty();
+    	    		row.find(".code").html(code);
     			},
     			error : function(e) {
     				alert("System error, please try again!");
@@ -269,19 +356,21 @@ $(document).ready(function() {
     	}
     });
     
-//map wb with bg (select bg)-----------------------------------------------------------------------------------------------------------
-    $("body").on("change", "select.wb", function(){
-    	if($(this).closest("td").prev().val()=="NEW"){
-    		$(this).closest("td").next().find("input").val($("#c-dept").text()+"-"+$("#s-dept").text+"NEW");
-    	}
-    	
-    });
-    
 //save budget---------------------------------------------------------------------------------------------------------------------------
     $("body").off("click", "#save").on("click", "#save", function(){
     	var budgetList = [];
     	$("tbody tr.budget-row").each(function(){
     		var row = $(this);
+    		var moredetail = [];
+    		var mdtList = row.nextUntil("tr.budget-row");
+    		mdtList.each(function(key1,row1){
+    			mdetail=[
+    					row1.attributes[1].value,
+    					row1.children[1].children[0].value,
+    					row1.children[3].children[0].value
+    			];
+    			moredetail.push(mdetail);
+    		})
     		var budget={
     				id : row.attr("data-bd-id"),
     				cdept : $("#c-dept").attr("data-dept-id"),
@@ -293,7 +382,8 @@ $(document).ready(function() {
     				allocate : row.find(".time-allocate").val(),
     				start : row.find(".start-time").val(),
     				expense : row.find(".expense").val(),
-    				role: $("#sysrole").val()
+    				role: $("#sysrole").val(),
+    				moredetail : moredetail
     		}
     		budgetList.push(budget);
     	});
@@ -316,8 +406,11 @@ $(document).ready(function() {
     				console.log(data);
     				$(".dept").each(function(){
     					if($(this).attr("data-dept-id")==$("#c-dept").attr("data-dept-id")){
+    						isEditting=0;
     						$(this).trigger("click");
+    						return false; 
     					}
+    					
     				})
     			},
     			error: function(e){
@@ -389,7 +482,16 @@ $(document).ready(function() {
     });
 //Edit -----------------------------------------------------------------------------------------------------------------
     $("body").off("click", "#edit").on("click", "#edit", function(){
-       	$("tbody tr input, select, #add-btn, #save, #submit-tool").removeAttr('disabled');
+       	$("tbody tr input[type='text'], tbody tr input[type='button'], tbody tr input[type='number'], tbody tr input[type='date'], select, #add-btn, #save, #submit-tool").removeAttr('disabled');
+       	$("tbody tr.budget-row").each(function(){
+       		if($(this).next().attr("class")!="more-detail"){
+       			$(this).find(".usetool").removeAttr("disabled");
+       		}
+       	})
+       	$("#edit").attr('disabled', 'disabled');
+       	$("#submit").attr('disabled', 'disabled');
+       	$("#reject").attr('disabled', 'disaled');
+       	isEditting=1;
     });
     
 //Utilize historical amount---------------------------------------------------------------------------------------------
@@ -414,9 +516,20 @@ $(document).ready(function() {
 					success : function(data){
 						$(".usetool:checked").each(function(){
 			    			row = $(this).closest("tr");
-			    			row.find(".expense").val(data[count]);
+			    			row.find(".bg-amount").val(data[count]);
 			    			count++;
+			    			
+			    			expense = row.find(".expense");
+				 	    	var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+				 	    	var firstDate = new Date($("#submit-tool").attr("data-date"));
+				 	    	var secondDate = new Date(row.find(".start-time").val());
+				
+				 	    	var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+				 	    	if($.isNumeric(diffDays)){
+				 	    		expense.val(parseInt((diffDays/30)*(Number(row.find(".bg-amount").val())/row.find(".time-allocate").val())));
+				 	    	}
 						})
+						$(".usetool:checked").prop("checked", false);
 					},
 					error: function(e){
 						alert("System error, please try again!");
@@ -444,9 +557,20 @@ $(document).ready(function() {
 					success : function(data){
 						$(".usetool:checked").each(function(){
 			    			row = $(this).closest("tr");
-			    			row.find(".expense").val(data[count]);
+			    			row.find(".bg-amount").val(data[count]);
 			    			count++;
+			    			
+			    			expense = row.find(".expense");
+				 	    	var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+				 	    	var firstDate = new Date($("#submit-tool").attr("data-date"));
+				 	    	var secondDate = new Date(row.find(".start-time").val());
+				
+				 	    	var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+				 	    	if($.isNumeric(diffDays)){
+				 	    		expense.val(parseInt((diffDays/30)*(Number(row.find(".bg-amount").val())/row.find(".time-allocate").val())));
+				 	    	}
 						})
+						$(".usetool:checked").prop("checked", false);
 					},
 					error: function(e){
 						alert("System error, please try again!");
@@ -455,4 +579,69 @@ $(document).ready(function() {
     		})
     	}
     })
+    
+    $("body").off("click", "tr.budget-row td.bl").on("click", "tr.budget-row td.bl", function(){
+    	$(this).closest("tr").nextUntil("tr.budget-row").toggle("fast", function() {});
+    })
+    
+    //Calculate Expense----------------------------------------------------------------------------------------------------
+    $("body").on("change", ".bg-amount, .time-allocate, .start-time", function(){
+    	expense = $(this).closest("tr").find(".expense");
+    	var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+    	var firstDate = new Date($("#submit-tool").attr("data-date"));
+    	var secondDate = new Date($(this).closest("tr").find(".start-time").val());
+
+    	var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+    	if($.isNumeric(diffDays)){
+    		expense.val(parseInt((diffDays/30)*(Number($(this).closest("tr").find(".bg-amount").val())/$(this).closest("tr").find(".time-allocate").val())));
+    	}
+    })
+    
+    //Gen Code-------------------------------------------------------------------------------------------------------------
+     $("body").on("change", ".bg", function(){
+    	 var code = "";
+    	 if($(this).val()=="NEW"){
+    		 code+="NEW";
+    	 }else{
+    		 code+=$(this).closest("tr").find(".control-dept").attr("data-dept-code")+"-";
+    		 code+=$(this).closest("tr").find(".sponsor-dept").attr("data-dept-code")+"-";
+    		 code+=$(this).closest("tr").find(".wb option:selected").attr("data-wb-code")+"-";
+    		 code+=$(this).closest("tr").find(".bg option:selected").attr("data-bg-code"); 
+    	 }
+    	 $(this).closest("tr").find(".code").empty();
+		 $(this).closest("tr").find(".code").html(code);
+     })
+     $(".w3-sidebar").off("click", "div>div>a.dept").on("click", "div>div>a.dept", function(){
+    	if($(this).attr("class")!="dropdown-toggle" || $(this).attr("class")!="btn-lg"){
+	    	if(isEditting==1){
+	    		var confirm = window.confirm("Data haven't saved. Are you sure want to leave?");
+	    		if(confirm == true){
+	    			redirect=1;
+	    			isEditting=0;
+	    			return true;
+	    		}else{
+	    			isEditting=1;
+	    			redirect=0;
+	    			return false;
+	    		}
+	    	}
+    	}
+     })
+     //warning-------------------------------------------------------------------------------------------------------------
+     $("body").off("click", "li>a").on("click", "li>a", function(){
+    	if($(this).attr("class")!="dropdown-toggle"){
+	    	if(isEditting==1){
+	    		var confirm = window.confirm("Data haven't saved. Are you sure want to leave?");
+	    		if(confirm == true){
+	    			redirect=1;
+	    			isEditting=0;
+	    			return true;
+	    		}else{
+	    			isEditting=1;
+	    			redirect=0;
+	    			return false;
+	    		}
+	    	}
+    	}
+     })
 })

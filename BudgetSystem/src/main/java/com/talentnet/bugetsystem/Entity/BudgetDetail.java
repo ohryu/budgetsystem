@@ -53,8 +53,7 @@ public class BudgetDetail implements Serializable{
 	private Long amount;
 	
 	@Column(name = "ALLOCATION_TIME")
-	@Temporal(TemporalType.DATE)
-	private Date allocationtime;
+	private Integer allocationtime;
 	
 	@Column(name = "START_TIME")
 	@Temporal(TemporalType.DATE)
@@ -114,11 +113,11 @@ public class BudgetDetail implements Serializable{
 		this.amount = amount;
 	}
 
-	public Date getAllocationtime() {
+	public Integer getAllocationtime() {
 		return allocationtime;
 	}
 
-	public void setAllocationtime(Date allocationtime) {
+	public void setAllocationtime(Integer allocationtime) {
 		this.allocationtime = allocationtime;
 	}
 

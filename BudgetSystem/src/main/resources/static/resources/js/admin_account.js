@@ -483,8 +483,9 @@ $(document).ready(function() {
 		    		data: JSON.stringify(acc),
 					accept: 'text/plain',
 					success : function(data){
-						if(data.indexOf("Successfully")!=-1){
-							console.log(data);
+						if(data.indexOf("Successfully")!=-1){				
+							$("#edit-close").trigger("click");
+							alert(data);
 							getData();
 						}else {
 							alert(data);
