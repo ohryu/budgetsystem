@@ -19,6 +19,7 @@ public interface DeptRepo extends JpaRepository<Dept, Integer>{
 	Dept findByDeptnameAndGroup(String name, Group group);
 	Dept findByDeptcodeAndGroup(String code, Group group);
 	List<Dept> findByGroup(Group group);
+	List<Dept> findByDeptidIn(List<Integer> id);
 	@Transactional
 	void removeByDeptid(Integer id);
 }

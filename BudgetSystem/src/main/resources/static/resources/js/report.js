@@ -106,4 +106,46 @@ $(document).ready(function() {
 			})
 		}
 	});
+	
+	$('#sponsor').click(function(){
+		var report_dept = []; //[0:sponsor/1:control, dept, dept....]
+		dept.push(0);
+		$(".dept:checked").each(function(){
+			dept.push($(this).attr("data-dept-id"));
+		})
+		$.ajax({
+    				type : "POST",
+		    		url : "/service/report",
+		    		contentType : "application/json",
+		    		data: JSON.stringify(inputs),
+					accept: 'text/plain',
+					success : function(data){
+					},
+					error: function(e){
+						alert("System error, Please try again!");
+						console.log("ERROR : ", e);
+					}
+					
+	})
+	
+	$('#control').click(function(){
+		var report_dept = []; //[0:sponsor/1:control, dept, dept....]
+		dept.push(1);
+		$(".dept:checked").each(function(){
+			dept.push($(this).attr("data-dept-id"));
+		})
+		$.ajax({
+    				type : "POST",
+		    		url : "/service/report",
+		    		contentType : "application/json",
+		    		data: JSON.stringify(inputs),
+					accept: 'text/plain',
+					success : function(data){
+					},
+					error: function(e){
+						alert("System error, Please try again!");
+						console.log("ERROR : ", e);
+					}
+					
+	})
 })

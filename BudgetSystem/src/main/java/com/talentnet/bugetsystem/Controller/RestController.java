@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.transaction.annotation.*;
 
@@ -64,6 +65,7 @@ import com.talentnet.bugetsystem.Repository.UserRepo;
 import com.talentnet.bugetsystem.Repository.UserroleRepo;
 import com.talentnet.bugetsystem.Repository.WbRepo;
 import com.talentnet.bugetsystem.Repository.YearRepo;
+import com.talentnet.bugetsystem.Service.ExportExcelService;
 
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
@@ -987,6 +989,22 @@ public class RestController {
 			
 		}
 		return result;
+	}
+	
+	@RequestMapping(value = "/service/report", method = RequestMethod.POST)
+	public String exportReport(@RequestBody List<Integer> report_dept) {
+		ExportExcelService export_sv = new ExportExcelService();
+		if(report_dept.get(0)==0) {  //sponsor
+			report_dept.remove(0);
+			List<Budget> budget = budgetRepo.findByDeptIn(deptRepo.findByDeptidIn(report_dept));
+			List<BudgetDetail> bds = bdRepo.getdatagroupby(budget);
+			export_sv.ReportBySponsor(bds);
+		}else { 					  //control
+			report_dept.remove(0);
+			List<Budget> budget = budgetRepo.findByDeptIn(deptRepo.findByDeptidIn(report_dept));		
+			export_sv.ReportByControl(bdRepo.findByBudgetInOrderByBgAsc(budget));
+		}
+		return "Successful!";
 	}
 	
 	@RequestMapping(value = "/admin/refresh", method = RequestMethod.GET)

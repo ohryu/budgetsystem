@@ -19,8 +19,8 @@ public class ExcelExportController {
 	    return new ModelAndView(new Report_controldept(), "summary", bdRepo.findAllByOrderByBudgetDesc());
 	}
 	
-	@RequestMapping(value = "/service/download1", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/service/download1", method = RequestMethod.GET)
 	public ModelAndView download1(Model model) {
-	    return new ModelAndView(new Report_controldept(), "summary", bdRepo.getdatagroupby());
-	}
+	    return new ModelAndView(new Report_controldept(), "summary", bdRepo. ());
+	}*/
 }
