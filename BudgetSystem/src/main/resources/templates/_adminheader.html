@@ -34,6 +34,7 @@
 	href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
 	rel="stylesheet" type="text/css" />
 <script src="/resources/js/header.js"></script>
+<script src="/resources/js/autoNumeric.js"></script>
 
 </head>
 <body>
@@ -75,6 +76,10 @@
 				          	<li><a href="/admin/budgetline-dept">Dept-Budget Line</a></li>
 				        </ul>
 			      	</li>
+			      	<li th:switch="${userInfo[1]}" id="account">
+						<a th:case="'ROLE_ADMIN'" href="/admin/report" aria-expanded="false"> <i class="glyphicon glyphicon-list-alt"></i>Report</a>
+						<a th:case="'ROLE_USER'" href="/user/report" aria-expanded="false"> <i class="glyphicon glyphicon-list-alt"></i>Report</a>
+					</li>
 			      	<li th:if="${userInfo[1]} == 'ROLE_ADMIN'"><a href="#" id="refresh" aria-expanded="false"><i class="glyphicon glyphicon-refresh"></i>Refresh</a></li>
 				</ul>
 

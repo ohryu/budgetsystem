@@ -19,6 +19,20 @@
 }
 table tbody tr td select{
 	max-width: 150px;
+	float: left;
+}
+table tbody tr td input[type=number].time-allocate{
+	width: 50px;
+}
+table tbody tr td input[type=text], table tbody tr td input[type=date]{
+	width: 120px;
+}
+th{
+	text-align: center;
+}
+table tbody tr td input[type=date]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    display: none;
 }
 table tbody tr.budget-row{
 	background-color: #f0ffff !important;

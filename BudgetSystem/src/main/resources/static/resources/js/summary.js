@@ -58,12 +58,12 @@ $(document).ready(function() {
 						 
 									row+='</select>\
 						  			</td>\
-							 		<td><input type="text" class="bg" size="10"></td>\
+							 		<td><input type="text" class="bg"></td>\
 						  			<td class="code">NEW</td>\
-						  			<td><input type="text" class="bg-amount" size="10"></td>\
+						  			<td><input type="text" class="bg-amount num" size="10"></td>\
 						  			<td><input type="number" class="time-allocate" value="12"></td>\
 						  			<td><input type="date" class="start-time" size="10" value="2019-01-01"></td>\
-						  			<td><input type="text" class="expense" size="10"></td>\
+						  			<td><input type="text" class="expense num" size="10"></td>\
 						  			<td><input type="button" class="btn btn-info delete-btn" name="" value="Delete">\
 						 				<input type="button" class="btn btn-info add-detail-btn" name="" value="Add Detail">\
 									</td>\
@@ -85,12 +85,12 @@ $(document).ready(function() {
 						 			}) 					
 						 			row+='</select>\
 						  			</td>\
-						 			<td><input type="text" class="bg" size="10"></td>\
+						 			<td><input type="text" class="bg"></td>\
 							  		<td class="code">NEW</td>\
-							  		<td><input type="text" class="bg-amount" size="10"></td>\
+							  		<td><input type="text" class="bg-amount num" size="10"></td>\
 							  		<td><input type="number" class="time-allocate" value="12"></td>\
 							  		<td><input type="date" class="start-time" size="10" value="2019-01-01"></td>\
-							  		<td><input type="text" class="expense" size="10"></td>\
+							  		<td><input type="text" class="expense num" size="10"></td>\
 							  		<td><input type="button" class="btn btn-info delete-btn" name="" value="Delete">\
 						 				<input type="button" class="btn btn-info add-detail-btn" name="" value="Add Detail">\
 						 			</td>\
@@ -99,6 +99,7 @@ $(document).ready(function() {
 						$(".summary table tbody").append(row);
 					});
 				}
+				$(".num").autoNumeric('init', {mDec: '0'});
 			},
 			error : function(e) {
 				alert("System error, please try again!");
@@ -173,10 +174,10 @@ $(document).ready(function() {
 							row+='<td class="code">'+val.bd.budget.dept.deptcode+'-'+val.bd.dept.deptcode+'-'+val.bd.bg.wb.wbcode+'-'+val.bd.bg.bgcode+'</td>';
 						}
 						row+='\
-					  		<td><input type="text" class="bg-amount" size="10" value="'+val.bd.amount+'"></td>\
+					  		<td><input type="text" class="bg-amount num" size="10" value="'+val.bd.amount+'"></td>\
 					  		<td><input type="number" class="time-allocate" value="'+val.bd.allocationtime+'"></td>\
 					  		<td><input type="date" class="start-time" size="10" value="'+val.bd.starttime+'"></td>\
-					  		<td><input type="text" class="expense" size="10" value="'+val.bd.expense+'"></td>\
+					  		<td><input type="text" class="expense num" size="10" value="'+val.bd.expense+'"></td>\
 					  		<td><input type="button" class="btn btn-info delete-btn" name="" value="Delete">\
 					  			<input type="button" class="btn btn-info add-detail-btn" name="" value="Add Detail">\
 					  		</td>\
@@ -187,7 +188,7 @@ $(document).ready(function() {
 							 			<td colspan=4></td><td>\
 											<input type="text" class="mdt-detail" value="'+val1.detail+'">\
 										</td><td></td>\
-										<td><input type="text" class="mdt-amount" value="'+val1.amount+'" size="10">\</td>\
+										<td><input type="text" class="mdt-amount num" value="'+val1.amount+'" size="10">\</td>\
 										<td colspan=3></td><td><input type="button" class="btn btn-info mdt-remove" value="Delete"></td>\
 				 					</tr>';
 				 		})
@@ -206,7 +207,7 @@ $(document).ready(function() {
 						$("#submit").attr('disabled', 'disabled');
 						$("#edit").attr('disabled', 'disabled');
 						$("#save").attr('disabled', 'disabled');
-						$("#reject").attr('disabled');
+						$("#reject").attr('disabled','disabled');
 					}else if(($("#sysrole").val()=="REPORTER" && data[0].bd.budget.status==0) || ($("#sysrole").val()=="REVIEWER" && data[0].bd.budget.status==1) || ($("#sysrole").val()=="NOT" && data[0].bd.budget.status==2)){
 						$("#edit").removeAttr('disabled');
 						$("#submit").removeAttr('disabled');
@@ -215,6 +216,7 @@ $(document).ready(function() {
 						$("#save").attr('disabled', 'disabled');
 						$("#reject").removeAttr('disabled');
 					}
+					$(".num").autoNumeric('init', {mDec: '0'});
 					$("tbody tr input, select, #add-btn, #save, #submit-tool").attr('disabled', 'disaled');
 				},
 				error : function(e) {
@@ -235,9 +237,10 @@ $(document).ready(function() {
 		 		newRow.append('<td colspan=4></td><td>\
 		 							<input type="text" class="mdt-detail" value="No detail">\
 		 						</td><td></td>\
-		 						<td><input type="text" class="mdt-amount" data-mdt-id="0" value="0" size="10">\</td>\
+		 						<td><input type="text" class="mdt-amount num" data-mdt-id="0" value="0" size="10">\</td>\
 		 						<td colspan=3></td><td><button class="btn btn-info mdt-remove">Delete</button></td>');
 	 			row1.after(newRow);
+	 			$(".num").autoNumeric('init', {mDec: '0'});
 	 		})
 	 		
 	 		$("body").off("click", ".mdt-remove").on("click", ".mdt-remove",function(){
@@ -252,16 +255,7 @@ $(document).ready(function() {
 		 			})
 	 			}
 	 			bgrow.find(".bg-amount").val(total);
-	 		})
-	 		
-	 		$("body").on("focusout", ".mdt-amount", function(){
-	 			bgrow = $(this).closest("tr").prevAll("tr.budget-row").first();
-	 			total = 0;
-	 			bgrow.nextUntil(".budget-row").each(function(key, row1){
-	 				total = total + Number(row1.children[3].children[0].value);
-	 			})
-	 			bgrow.find(".bg-amount").val(total);
-	 			
+	 			$(".num").autoNumeric('init', {mDec: '0'});
 	 			expense = bgrow.find(".expense");
 	 	    	var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
 	 	    	var firstDate = new Date($("#submit-tool").attr("data-date"));
@@ -269,8 +263,33 @@ $(document).ready(function() {
 	
 	 	    	var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
 	 	    	if($.isNumeric(diffDays)){
-	 	    		expense.val(parseInt((diffDays/30)*(Number(bgrow.find(".bg-amount").val())/bgrow.find(".time-allocate").val())));
+	 	    		expense.val(parseInt((diffDays/30)*(Number(bgrow.find(".bg-amount").val().replace(/,/g,""))/bgrow.find(".time-allocate").val()))).change();
+	 	    		expense.trigger("focusin");
+	 	    		expense.trigger("focusout");
 	 	    	}
+	 		})
+	 		
+	 		$("body").on("focusout", ".mdt-amount", function(){
+	 			bgrow = $(this).closest("tr").prevAll("tr.budget-row").first();
+	 			total = 0;
+	 			bgrow.nextUntil(".budget-row").each(function(key, row1){
+	 				total = total + Number(row1.children[3].children[0].value.replace(/,/g,""));
+	 			})
+	 			bgrow.find(".bg-amount").val(total);
+	 			bgrow.find(".bg-amount").trigger("focusin");
+	 			bgrow.find(".bg-amount").trigger("focusout");
+	 			expense = bgrow.find(".expense");
+	 	    	var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+	 	    	var firstDate = new Date($("#submit-tool").attr("data-date"));
+	 	    	var secondDate = new Date(bgrow.find(".start-time").val());
+	
+	 	    	var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+	 	    	if($.isNumeric(diffDays)){
+	 	    		expense.val(parseInt((diffDays/30)*(Number(bgrow.find(".bg-amount").val().replace(/,/g,""))/bgrow.find(".time-allocate").val()))).change();
+	 	    		expense.trigger("focusin");
+	 	    		expense.trigger("focusout");
+	 	    	}
+	 	    	
 	 		})
 	 		
 	    	//get budget line----------------------------------------------------------------------------------------------------------
@@ -367,7 +386,7 @@ $(document).ready(function() {
     			mdetail=[
     					row1.attributes[1].value,
     					row1.children[1].children[0].value,
-    					row1.children[3].children[0].value
+    					row1.children[3].children[0].value.replace(/,/g,"")
     			];
     			moredetail.push(mdetail);
     		})
@@ -378,10 +397,10 @@ $(document).ready(function() {
     				bline : row.find("td.bl").attr("data-bl-id"),
     				wb : row.find(".wb").val(),
     				bg : row.find(".bg").val(),
-    				amount : row.find(".bg-amount").val(),
+    				amount : Number(row.find(".bg-amount").val().replace(/,/g,"")),
     				allocate : row.find(".time-allocate").val(),
     				start : row.find(".start-time").val(),
-    				expense : row.find(".expense").val(),
+    				expense :  Number(row.find(".expense").val().replace(/,/g,"")),
     				role: $("#sysrole").val(),
     				moredetail : moredetail
     		}
@@ -517,6 +536,8 @@ $(document).ready(function() {
 						$(".usetool:checked").each(function(){
 			    			row = $(this).closest("tr");
 			    			row.find(".bg-amount").val(data[count]);
+			    			row.find(".bg-amount").trigger("focusin");
+			    			row.find(".bg-amount").trigger("focusout");
 			    			count++;
 			    			
 			    			expense = row.find(".expense");
@@ -526,7 +547,9 @@ $(document).ready(function() {
 				
 				 	    	var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
 				 	    	if($.isNumeric(diffDays)){
-				 	    		expense.val(parseInt((diffDays/30)*(Number(row.find(".bg-amount").val())/row.find(".time-allocate").val())));
+				 	    		expense.val(parseInt((diffDays/30)*(Number(row.find(".bg-amount").val().replace(/,/g,""))/row.find(".time-allocate").val())));
+				 	    		expense.trigger("focusin");
+				 	    		expense.trigger("focusout");
 				 	    	}
 						})
 						$(".usetool:checked").prop("checked", false);
@@ -545,7 +568,7 @@ $(document).ready(function() {
     			input.push(row.find(".sponsor-dept").attr("data-dept-id"));
     			input.push(row.find(".bl").attr("data-bl-id"));
     			input.push($("#criteria").val());
-    			input.push($("#cost-allocation").val());
+    			input.push($("#cost-allocation").val().replace(/,/g,""));
     			inputs.push(input);
     		})
     		$.ajax({
@@ -558,6 +581,8 @@ $(document).ready(function() {
 						$(".usetool:checked").each(function(){
 			    			row = $(this).closest("tr");
 			    			row.find(".bg-amount").val(data[count]);
+			    			row.find(".bg-amount").trigger("focusin");
+			    			row.find(".bg-amount").trigger("focusout");
 			    			count++;
 			    			
 			    			expense = row.find(".expense");
@@ -567,7 +592,9 @@ $(document).ready(function() {
 				
 				 	    	var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
 				 	    	if($.isNumeric(diffDays)){
-				 	    		expense.val(parseInt((diffDays/30)*(Number(row.find(".bg-amount").val())/row.find(".time-allocate").val())));
+				 	    		expense.val(parseInt((diffDays/30)*(Number(row.find(".bg-amount").val().replace(/,/g,""))/row.find(".time-allocate").val())));
+				 	    		expense.trigger("focusin");
+				 	    		expense.trigger("focusout");
 				 	    	}
 						})
 						$(".usetool:checked").prop("checked", false);
@@ -578,13 +605,14 @@ $(document).ready(function() {
 					}
     		})
     	}
+    	$(".num").autoNumeric('init', {mDec: '0'});
     })
     
     $("body").off("click", "tr.budget-row td.bl").on("click", "tr.budget-row td.bl", function(){
     	$(this).closest("tr").nextUntil("tr.budget-row").toggle("fast", function() {});
     })
     
-    //Calculate Expense----------------------------------------------------------------------------------------------------
+    //Calculate Expense when bg-amount change----------------------------------------------------------------------------------------------------
     $("body").on("change", ".bg-amount, .time-allocate, .start-time", function(){
     	expense = $(this).closest("tr").find(".expense");
     	var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
@@ -593,7 +621,9 @@ $(document).ready(function() {
 
     	var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
     	if($.isNumeric(diffDays)){
-    		expense.val(parseInt((diffDays/30)*(Number($(this).closest("tr").find(".bg-amount").val())/$(this).closest("tr").find(".time-allocate").val())));
+    		expense.val(parseInt((diffDays/30)*(Number($(this).closest("tr").find(".bg-amount").val().replace(/,/g,""))/$(this).closest("tr").find(".time-allocate").val())));
+    		expense.trigger("focusin");
+    		expense.trigger("focusout");
     	}
     })
     
@@ -644,4 +674,7 @@ $(document).ready(function() {
 	    	}
     	}
      })
+     
+     $("#cost-allocation").autoNumeric('init', {mDec: '0'});
+    
 })

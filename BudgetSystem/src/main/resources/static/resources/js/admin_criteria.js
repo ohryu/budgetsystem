@@ -2,6 +2,7 @@ $(document).ready(function() {
 	var company =[];
 	var criteria = [];
 	var criteria_detail = [];
+	var isEditting = 0;
 	
 	
 	function getData(){
@@ -55,7 +56,7 @@ $(document).ready(function() {
 								comp++;
 							}
 							table+='<td>'+val2.dept.deptname+'</td>';
-							table+='<td><input type="text" value="'+val2.amount+'" data-cd-id="'+val2.cdid+'"></td>';
+							table+='<td><input type="number" value="'+val2.amount+'" data-cd-id="'+val2.cdid+'" size="10"></td>';
 							$("#table").append(table);
 						})
 					})
@@ -101,6 +102,7 @@ $(document).ready(function() {
 		$(".del-criteria").removeAttr('disabled');
 		$("#save-criteria").removeAttr('disabled');
 		$(this).attr('disabled','disabled');
+		isEditting = 1;
 	})
 	
 	$("body").off("click", "#save-criteria").on("click", "#save-criteria", function(){
@@ -148,4 +150,21 @@ $(document).ready(function() {
 			}
 		})
 	})
+	
+	 $("body").off("click", "li>a").on("click", "li>a", function(){
+    	if($(this).attr("class")!="dropdown-toggle"){
+	    	if(isEditting==1){
+	    		var confirm = window.confirm("Data haven't saved. Are you sure want to leave?");
+	    		if(confirm == true){
+	    			redirect=1;
+	    			isEditting=0;
+	    			return true;
+	    		}else{
+	    			isEditting=1;
+	    			redirect=0;
+	    			return false;
+	    		}
+	    	}
+    	}
+     })
 })

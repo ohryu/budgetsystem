@@ -1,5 +1,7 @@
 package com.talentnet.bugetsystem.Controller;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+
 import java.security.Principal;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -300,8 +302,8 @@ public class RestController {
 		user.setFullname(userform.getFullname());
 		user.setPassword(passwordEncoder.encode("P@ssword123"));
 		user.setRole(roleRepo.findByRoleid(2));
-		user.setActive(false);
-		userRepo.save(user);
+		user.setActive(false);	
+		
 		List<UserRole> uroleList = new ArrayList<>();
 		for(SysRoleDTO roles : userform.getRole()) {
 			if(roles.getRole()==1) {
@@ -309,6 +311,7 @@ public class RestController {
 				if(!userroleRepo.findByGroup(groupRepo.findByGroupid(roles.getGroup())).isEmpty()) {
 					return "Reviewer For Group "+ groupRepo.findByGroupid(roles.getGroup()).getGroupcode()+" Existed!";
 				};
+				userRepo.save(user);
 				urole.setUser(userRepo.findByUsername(userform.getUsername()));
 				urole.setGroup(groupRepo.findByGroupid(roles.getGroup()));
 				urole.setSysrole(sysroleRepo.findByRoleid(1));
@@ -318,6 +321,7 @@ public class RestController {
 				if(!userroleRepo.findByDept(deptRepo.findByDeptid(roles.getDept())).isEmpty()) {
 					return "Reporter For Dept "+ deptRepo.findByDeptid(roles.getDept()).getDeptname()+" Existed!";
 				};
+				userRepo.save(user);
 				urole.setUser(userRepo.findByUsername(userform.getUsername()));
 				urole.setDept(deptRepo.findByDeptid(roles.getDept()));
 				urole.setSysrole(sysroleRepo.findByRoleid(2));
@@ -399,23 +403,70 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/getdepts", method = RequestMethod.GET)
-	public List<CompanyDTO> getAlldepts(){
+	public List<CompanyDTO> getAlldepts(Principal principal){
 		List<CompanyDTO> companydtos = new ArrayList<>();
-		List<Company> companies = compRepo.findAll();
-		for(Company company : companies) {
-			CompanyDTO companydto = new CompanyDTO();
-			List<GroupDTO> groupdtos = new ArrayList<>();
-			List<Group> groups = groupRepo.findByCompany(company);
-			for(Group group : groups) {
-				GroupDTO groupdto = new GroupDTO(); 
-				List<Dept> depts = deptRepo.findByGroup(group);
-				groupdto.setGroup(group);
-				groupdto.setDeptlist(depts);
-				groupdtos.add(groupdto);
+		if(userRepo.findByUsername(principal.getName()).getRole().equals(roleRepo.findByRoleid(1))) {
+			List<Company> companies = compRepo.findAll();
+			for(Company company : companies) {
+				CompanyDTO companydto = new CompanyDTO();
+				List<GroupDTO> groupdtos = new ArrayList<>();
+				List<Group> groups = groupRepo.findByCompany(company);
+				for(Group group : groups) {
+					GroupDTO groupdto = new GroupDTO(); 
+					List<Dept> depts = deptRepo.findByGroup(group);
+					groupdto.setGroup(group);
+					groupdto.setDeptlist(depts);
+					groupdtos.add(groupdto);
+				}
+				companydto.setCompany(company);
+				companydto.setGrouplist(groupdtos);
+				companydtos.add(companydto);
 			}
-			companydto.setCompany(company);
-			companydto.setGrouplist(groupdtos);
-			companydtos.add(companydto);
+		}else {
+			List<UserRole> userrole = userroleRepo.findByUser(userRepo.findByUsername(principal.getName()));
+			List<Company> comps = new ArrayList<>();
+			List<Group> groups = new ArrayList<>();
+			List<Dept> depts = new ArrayList<>();
+			for(UserRole ur : userrole) {
+				if(ur.getSysrole().equals(sysroleRepo.findByRoleid(1))) {
+					if(!comps.contains(ur.getGroup().getCompany()))
+						comps.add(ur.getGroup().getCompany());
+					if(!groups.contains(ur.getGroup())) {
+						groups.add(ur.getGroup());
+						for(Dept dept : deptRepo.findByGroupAndControl(ur.getGroup(), true)) {
+							if(!depts.contains(dept))
+								depts.add(dept);
+						}
+					}
+				}else {
+					if(!comps.contains(ur.getDept().getGroup().getCompany()))
+						comps.add(ur.getDept().getGroup().getCompany());
+					if(!groups.contains(ur.getDept().getGroup()))
+						groups.add(ur.getDept().getGroup());
+					if(!depts.contains(ur.getDept()))
+						depts.add(ur.getDept());
+				}
+			}
+			for(Company comp: comps) {
+				CompanyDTO companydto = new CompanyDTO();
+				List<GroupDTO> tempgroups = new ArrayList<>();
+				for(Group group : groups) {
+					if(group.getCompany().equals(comp)) {
+						GroupDTO tempgroup = new GroupDTO();
+						tempgroup.setGroup(group);
+						List<Dept> tempdept = new ArrayList<>();
+						for (Dept dept : depts) {
+							if(dept.getGroup().equals(group))
+								tempdept.add(dept);
+						}
+						tempgroup.setDeptlist(tempdept);
+						tempgroups.add(tempgroup);
+					}
+				}
+				companydto.setCompany(comp);
+				companydto.setGrouplist(tempgroups);
+				companydtos.add(companydto);
+			}
 		}
 		return companydtos;
 	}
@@ -908,7 +959,7 @@ public class RestController {
 					HistoricalAmount ha = haRepo.findByWbcodeAndSponsor(bline.getBlcode(), dept.getDeptcode());
 					HistoricalAmount total = haRepo.findByWbcodeAndSponsor(bline.getBlcode(), "TOTAL");
 					if(ha == null) result.add((long) 0);
-					if(total.getAmount()==0) result.add((long) 0);
+					else if(total.getAmount()==0) result.add((long) 0);
 					else result.add(cost*ha.getAmount()/total.getAmount());
 				}
 			}else {

@@ -321,6 +321,30 @@ public class MainController {
 		return "admin_criteria";
 	}
 	
+	@RequestMapping(value = "/admin/report", method = RequestMethod.GET)
+	public String adminReport(Model model, Principal principal) {
+		String userName = principal.getName();
+		System.out.println("User Name: " + userName);
+		List<String> userInfo = new ArrayList<>();
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
+		userInfo.add("NOT");	
+		model.addAttribute("userInfo", userInfo);
+		return "report";
+	}
+	
+	@RequestMapping(value = "/user/report", method = RequestMethod.GET)
+	public String userReport(Model model, Principal principal) {
+		String userName = principal.getName();
+		System.out.println("User Name: " + userName);
+		List<String> userInfo = new ArrayList<>();
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
+		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
+		userInfo.add("NOT");
+		model.addAttribute("userInfo", userInfo);
+		return "report";
+	}
+	
 	@RequestMapping(value = "/403", method = RequestMethod.GET)
 	public String accessDenied(Model model, Principal principal) {
 

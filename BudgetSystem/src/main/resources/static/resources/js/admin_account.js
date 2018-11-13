@@ -110,6 +110,7 @@ $(document).ready(function() {
 			}else{
 				$.ajax({
 					type : "POST",
+					async: false,
 					contentType : "application/json",
 					url : '/service/changepassword',
 					data : JSON.stringify(password),
