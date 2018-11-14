@@ -991,7 +991,7 @@ public class RestController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/service/report", method = RequestMethod.POST)
+	/*@RequestMapping(value = "/service/report", method = RequestMethod.POST)
 	public String exportReport(@RequestBody List<Integer> report_dept) {
 		ExportExcelService export_sv = new ExportExcelService();
 		if(report_dept.get(0)==0) {  //sponsor
@@ -1005,7 +1005,7 @@ public class RestController {
 			export_sv.ReportByControl(bdRepo.findByBudgetInOrderByBgAsc(budget));
 		}
 		return "Successful!";
-	}
+	}*/
 	
 	@RequestMapping(value = "/admin/refresh", method = RequestMethod.GET)
 	@Transactional

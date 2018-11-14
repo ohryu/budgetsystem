@@ -28,6 +28,6 @@ public interface BudgetDetailRepo extends JpaRepository<BudgetDetail, Integer>{
 	
 	public List<BudgetDetail> findByBudgetInOrderByBgAsc(List<Budget> budget);
 	
-	@Query(value = "SELECT sum(b.amount), b.bline, b.dept FROM BudgetDetail b GROUP BY b.bline, b.dept WHERE b.budget IN :bgs")
+	@Query(value = "SELECT sum(b.amount), b.bline, b.dept FROM BudgetDetail b WHERE b.budget IN :bgs GROUP BY b.bline, b.dept")
 	public List<BudgetDetail> getdatagroupby(List<Budget> bgs);
 }
