@@ -16,8 +16,8 @@ public interface DeptRepo extends JpaRepository<Dept, Integer>{
 	List<Dept> findByGroupAndSponsor(Group group, boolean sponsor);
 	List<Dept> findByControl(boolean control);
 	Dept findByDeptid(Integer deptid);
-	Dept findByDeptnameAndGroup(String name, Group group);
-	Dept findByDeptcodeAndGroup(String code, Group group);
+	Dept findByDeptname(String name);
+	Dept findByDeptcode(String code);
 	List<Dept> findByGroup(Group group);
 	List<Dept> findByDeptidIn(List<Integer> id);
 	@Transactional

@@ -108,22 +108,34 @@ $(document).ready(function() {
 	});
 	
 	$('#sponsor').click(function(){
+		if($(".dept:checked").length==0){
+			alert("No Dept is chosen");
+			return false;
+		}
 		var report_dept = ""; //[0:sponsor/1:control, dept, dept....]
-		report_dept+="0,"
+		report_dept+="0,";
 		$(".dept:checked").each(function(){
 			report_dept+=$(this).attr("data-dept-id")+",";
 		})
 		$("#dept-string").val(report_dept.substring(0, report_dept.length -1));
 		$("#submit-btn").trigger("click");
+		$("input[type='checkbox']").prop("checked", false);
+		$("input[type='checkbox']").removeAttr('disabled');
 	})
 	
 	$('#control').click(function(){
+		if($(".dept:checked").length==0){
+			alert("No Dept is chosen");
+			return false;
+		}
 		var report_dept = ""; //[0:sponsor/1:control, dept, dept....]
-		report_dept+="1,"
+		report_dept+="1,";
 		$(".dept:checked").each(function(){
 			report_dept+=$(this).attr("data-dept-id")+",";
 		})
 		$("#dept-string").val(report_dept.substring(0, report_dept.length -1));
 		$("#submit-btn").trigger("click");
+		$("input[type='checkbox']").prop("checked", false);
+		$("input[type='checkbox']").removeAttr('disabled');
 	})
 })

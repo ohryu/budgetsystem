@@ -14,7 +14,7 @@ import com.talentnet.bugetsystem.Entity.Group;
 public interface GroupRepo extends JpaRepository<Group, Integer>{
 	List<Group> findByCompany(Company company);
 	Group findByGroupid(Integer id);
-	Group findByGroupcodeAndCompany(String code, Company comp);
+	Group findByGroupcode(String code);
 	@Transactional
 	void removeByGroupid(Integer id);
 }

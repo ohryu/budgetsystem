@@ -14,7 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -51,10 +54,20 @@ public class Report_controldept extends AbstractXlsView{
 	    style.setBorderLeft(BorderStyle.THIN);
 	    style.setFont(font);
 
+	    CellStyle headerstyle = workbook.createCellStyle();
+	    headerstyle.setAlignment(HorizontalAlignment.CENTER);
+	    headerstyle.setFillForegroundColor(IndexedColors.SKY_BLUE.getIndex());
+	    headerstyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    headerstyle.setFont(font);
+	    headerstyle.setBorderBottom(BorderStyle.THIN);
+	    headerstyle.setBorderTop(BorderStyle.THIN);
+	    headerstyle.setBorderRight(BorderStyle.THIN);
+	    headerstyle.setBorderLeft(BorderStyle.THIN);
 
 	    // create header row
 	    Row header0 = sheet.createRow(0);
 	    header0.createCell(12).setCellValue("Expense");
+	    header0.getCell(12).setCellStyle(headerstyle);
 	    sheet.addMergedRegion(new CellRangeAddress(0, 0, 12, 23));
 	    
 	    Row header = sheet.createRow(1);
@@ -84,7 +97,7 @@ public class Report_controldept extends AbstractXlsView{
 	    header.createCell(23).setCellValue("Dec");
 	    header.createCell(24).setCellValue("Total");
 	    for (int i=0; i<25; i++){
-	    	   header.getCell(i).setCellStyle(style);
+	    	   header.getCell(i).setCellStyle(headerstyle);
 	    }
 	    
 	    int rowCount = 2;

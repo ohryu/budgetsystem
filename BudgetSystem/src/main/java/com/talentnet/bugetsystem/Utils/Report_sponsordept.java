@@ -2,8 +2,6 @@ package com.talentnet.bugetsystem.Utils;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,15 +12,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.web.servlet.view.document.AbstractXlsView;
 
-import com.talentnet.bugetsystem.Entity.BudgetDetail;
-import com.talentnet.bugetsystem.Entity.BudgetLine;
+import com.talentnet.bugetsystem.DTO.bdsqueryDTO;
+import com.talentnet.bugetsystem.DTO.blinequeryDTO;
+import com.talentnet.bugetsystem.DTO.deptqueryDTO;
 
 public class Report_sponsordept extends AbstractXlsView{
 	@Override
@@ -31,10 +32,11 @@ public class Report_sponsordept extends AbstractXlsView{
 		 // change the file name
 	    response.setHeader("Content-Disposition", "attachment; filename=\"summary.xls\"");
 	    Format formatter = new SimpleDateFormat("dd-MM-yyyy");
-	    @SuppressWarnings("unchecked")
-	    List<BudgetDetail> bds = (List<BudgetDetail>) model.get("summary");
-
-	    // create excel xls sheet
+	    Map<String, Object> data = (Map<String, Object>) model.get("data");
+	    List<bdsqueryDTO> bds = (List<bdsqueryDTO>) data.get("bds");
+	    List<blinequeryDTO> blines = (List<blinequeryDTO>)data.get("blines");
+	    List<deptqueryDTO> depts = (List<deptqueryDTO>)data.get("depts");
+	    
 	    Sheet sheet = workbook.createSheet("Summary");
 
 	    // create style for header cells
@@ -49,100 +51,63 @@ public class Report_sponsordept extends AbstractXlsView{
 	    style.setBorderRight(BorderStyle.THIN);
 	    style.setBorderLeft(BorderStyle.THIN);
 	    style.setFont(font);
-
+	    
+	    CellStyle headerstyle = workbook.createCellStyle();
+	    headerstyle.setAlignment(HorizontalAlignment.CENTER);
+	    headerstyle.setFillForegroundColor(IndexedColors.SKY_BLUE.getIndex());
+	    headerstyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    headerstyle.setFont(font);
+	    headerstyle.setBorderBottom(BorderStyle.THIN);
+	    headerstyle.setBorderTop(BorderStyle.THIN);
+	    headerstyle.setBorderRight(BorderStyle.THIN);
+	    headerstyle.setBorderLeft(BorderStyle.THIN);
 
 	    // create header row
-	    Row header0 = sheet.createRow(0);
-	    header0.createCell(12).setCellValue("Expense");
-	    sheet.addMergedRegion(new CellRangeAddress(0, 0, 12, 23));
-	    
-	    Row header = sheet.createRow(1);
+	    Row header = sheet.createRow(0);
 	    header.createCell(0).setCellValue("Account");
+	    sheet.autoSizeColumn(0);
+	    header.getCell(0).setCellStyle(headerstyle);
 	    header.createCell(1).setCellValue("Account code");
-	    
-	    for (int i=0; i<25; i++){
-	    	   header.getCell(i).setCellStyle(style);
+	    sheet.autoSizeColumn(1);
+	    header.getCell(1).setCellStyle(headerstyle);
+	    int cellcount = 2;
+	    int sponsordept = 0;
+	    for(deptqueryDTO dept : depts) {
+	    	header.createCell(cellcount).setCellValue(dept.getDeptcode());
+	    	header.getCell(cellcount).setCellStyle(headerstyle);
+	    	cellcount++;
+	    	sponsordept++;
 	    }
-	    
-	    int rowCount = 2;
-	    if(bds==null) return;
-	    List<BudgetLine> printedbd = new ArrayList<>();
-	    for(BudgetDetail bd : bds){
-	    	if(printedbd.contains(bd.getBline())) continue;
-	    	printedbd.add(bd.getBline());
-	    	List<BudgetDetail> temp = bds.stream().filter(b -> b.getBline().equals(bd.getBline())).collect(Collectors.toList());  	
-	    	Row group =  sheet.createRow(rowCount);
-	    	group.createCell(0).setCellValue(bd.getBline().getBlname());
-	    	sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, 0, 8));
-	    	rowCount++;
-	    	long groupamount = 0;
-    		long[] group_amount_bymonth = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    		long groupexpense = 0;
-	    	for(BudgetDetail bdtemp : temp) { 	
-		        Row userRow =  sheet.createRow(rowCount);
-		        userRow.createCell(0).setCellValue(bdtemp.getBudget().getDept().getDeptname());
-		        userRow.createCell(1).setCellValue(bdtemp.getDept().getDeptname());
-		        userRow.createCell(2).setCellValue(bdtemp.getBline().getBlcode());
-		        userRow.createCell(3).setCellValue(bdtemp.getBline().getBlname());
-		        if(bdtemp.getBg() == null) {
-		        	userRow.createCell(4).setCellValue("NEW");
-		        	userRow.createCell(5).setCellValue("NEW");
-		        	userRow.createCell(6).setCellValue("NEW");
-		        	userRow.createCell(7).setCellValue(bdtemp.getNewdetail());
-		        	userRow.createCell(8).setCellValue("NEW");
-		        }else {	
-		        	userRow.createCell(4).setCellValue(bdtemp.getBg().getWb().getWbcode());
-		        	userRow.createCell(5).setCellValue(bdtemp.getBg().getWb().getWbname());
-		        	userRow.createCell(6).setCellValue(bdtemp.getBg().getBgcode());
-		        	userRow.createCell(7).setCellValue(bdtemp.getBg().getBgname());
-		        	userRow.createCell(8).setCellValue(bdtemp.getDept().getDeptcode()+"-"+bdtemp.getBudget().getDept().getDeptcode()+"-"+
-		        			bdtemp.getBg().getWb().getWbcode()+"-"+bdtemp.getBg().getBgcode());
-		        }
-		        userRow.createCell(9).setCellValue(bdtemp.getAmount());
-		        groupamount += bdtemp.getAmount();
-		        userRow.createCell(10).setCellValue(bdtemp.getAllocationtime());
-		        userRow.createCell(11).setCellValue(formatter.format(bdtemp.getStarttime()));
-		        Calendar cal = Calendar.getInstance();
-		        cal.setTime(bdtemp.getStarttime());
-		        int month = cal.get(Calendar.MONTH)+1;
-		        float firstmonth = (float)(30+1-cal.get(Calendar.DAY_OF_MONTH))/(float)30;
-		        long expense_per_month = (long)(bdtemp.getExpense()/(firstmonth + 12 - month));
-		        userRow.createCell(11+month).setCellValue((long)(expense_per_month*firstmonth));
-		        for(int i = 12; i<=23; i++) {
-		        	if(i-11 >= month) {
-		        		if(i-11 == month) {
-		        			userRow.createCell(i).setCellValue((long)(expense_per_month*firstmonth));
-		        			group_amount_bymonth[i-12] += (long)(expense_per_month*firstmonth);
-		        		}
-		        		else {
-		        			userRow.createCell(i).setCellValue((long)(expense_per_month));
-		        			group_amount_bymonth[i-12] += (long)(expense_per_month);
-		        		}
-		        	}else {
-		        		userRow.createCell(i);
-		        	}
-		        }
-		        userRow.createCell(24).setCellValue(bdtemp.getExpense());
-		        groupexpense += bdtemp.getExpense();
-		        for (int i=0; i<25; i++){
-		        	sheet.autoSizeColumn(i);
-			    	userRow.getCell(i).setCellStyle(style);
-			    }
-		        rowCount++;
+	    header.createCell(sponsordept+2).setCellValue("Total");
+	    header.getCell(sponsordept+2).setCellStyle(headerstyle);
+	    int rowcount = 1;
+	    for(blinequeryDTO bline : blines) {
+	    	long total = 0;
+	    	Row blinerow = sheet.createRow(rowcount++);
+	    	blinerow.createCell(0).setCellValue(bline.getBlname());
+	    	blinerow.getCell(0).setCellStyle(style);
+	    	sheet.autoSizeColumn(0);
+	    	blinerow.createCell(1).setCellValue(bline.getBlcode());
+	    	blinerow.getCell(1).setCellStyle(style);
+	    	sheet.autoSizeColumn(1);
+	    	for(int i = 0; i<sponsordept; i++) {
+	    		int a = i;
+	    		List<bdsqueryDTO> bd =  bds.stream().filter(sr -> (sr.getBlname().equals(bline.getBlname()) && sr.getDeptcode().equals(depts.get(a).getDeptcode()))).collect(Collectors.toList());
+	    		
+	    		if(bd.isEmpty()) {
+	    			blinerow.createCell(i+2).setCellValue(0);
+	    		}
+	    		else {
+	    			blinerow.createCell(i+2).setCellValue(bd.get(0).getAmount());
+	    			total+= bd.get(0).getAmount();
+	    		}
+	    		blinerow.getCell(i+2).setCellStyle(style);
+	    		sheet.autoSizeColumn(i+2);
 	    	}
-	    	group.createCell(9).setCellValue(groupamount);
-		    group.getCell(9).setCellStyle(style);
-		    group.createCell(24).setCellValue(groupexpense);
-		    group.getCell(24).setCellStyle(style);
-		    for(int i=12; i<24; i++) {
-		     	group.createCell(i).setCellValue(group_amount_bymonth[i-12]);
-		       	group.getCell(i).setCellStyle(style);
-		    }
-		    
-	    	sheet.setRowGroupCollapsed(rowCount-temp.size()-1, false);
-	    	sheet.groupRow(rowCount-temp.size(),rowCount-1);
-	    	sheet.setRowSumsBelow(false);
+	    	blinerow.createCell(sponsordept+2);
+	    	blinerow.createCell(sponsordept+2).setCellValue(total);
+	    	sheet.autoSizeColumn(sponsordept+2);
+	    	blinerow.getCell(sponsordept+2).setCellStyle(style);
 	    }
-
 	}
 }

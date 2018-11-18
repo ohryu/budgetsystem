@@ -2,7 +2,6 @@ package com.talentnet.bugetsystem.DTO;
 
 import java.util.List;
 
-import com.talentnet.bugetsystem.Entity.Company;
 import com.talentnet.bugetsystem.Entity.Criteria;
 
 public class CrtCompDTO {

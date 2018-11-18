@@ -1,15 +1,13 @@
 package com.talentnet.bugetsystem.Controller;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 
 import java.security.Principal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.springframework.transaction.annotation.*;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -65,7 +63,6 @@ import com.talentnet.bugetsystem.Repository.UserRepo;
 import com.talentnet.bugetsystem.Repository.UserroleRepo;
 import com.talentnet.bugetsystem.Repository.WbRepo;
 import com.talentnet.bugetsystem.Repository.YearRepo;
-import com.talentnet.bugetsystem.Service.ExportExcelService;
 
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
@@ -135,6 +132,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/savebudget", method = RequestMethod.POST)
+	@Transactional
 	public String postbudget(@RequestBody List<BudgetDTO> budgets){
 		if(budgetRepo.findByDept(deptRepo.findByDeptid(budgets.get(0).getCdept()))==null){
 			Budget bg = new Budget();
@@ -218,6 +216,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/submitbudget", method = RequestMethod.POST)
+	@Transactional
 	public String submitbudget(@RequestBody BudgetDTO budget){
 		if(budget.getRole().equals("REPORTER")) {
 			Budget bud = budgetRepo.findByDept(deptRepo.findByDeptid(budget.getCdept()));
@@ -232,6 +231,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/rejectbudget", method = RequestMethod.POST)
+	@Transactional
 	public String rejectbudget(@RequestBody BudgetDTO budget){
 		if(budget.getRole().equals("NOT")) {
 			Budget bud = budgetRepo.findByDept(deptRepo.findByDeptid(budget.getCdept()));
@@ -251,6 +251,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value = "/service/resetpass/{id}", method = RequestMethod.GET)
+	@Transactional
 	public String resetpass(@PathVariable("id") int id){
 		BUser user = userRepo.findByUserid(id);
 		user.setPassword(passwordEncoder.encode("P@ssword123"));
@@ -268,6 +269,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/changepassword", method = RequestMethod.POST)
+	@Transactional
 	public String changePassword(@RequestBody PasswordDTO password, Principal principal){
 		BUser user = userRepo.findByUsername(principal.getName());
 		if(!passwordEncoder.matches(password.getOldpass(), user.getPassword())) {
@@ -296,6 +298,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/saveuser", method = RequestMethod.POST)
+	@Transactional
 	public String saveuser(@RequestBody UserDTO userform){
 		if(userRepo.findByUsername(userform.getUsername())!=null) return "Username existed!";
 		if(userform.getRole().isEmpty()) return "User must have aleast one role";
@@ -336,6 +339,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/saveadmin", method = RequestMethod.POST)
+	@Transactional
 	public String saveadmin(@RequestBody UserDTO userform){
 		if(userRepo.findByUsername(userform.getUsername())!=null) return "Username existed!";
 		BUser user = new BUser();
@@ -359,6 +363,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/edituser", method = RequestMethod.POST)
+	@Transactional
 	public String editUser(@RequestBody UserDTO userform){
 		if(userform.getRole().isEmpty()) return "User must have aleast one role";
 		BUser user = userRepo.findByUsername(userform.getUsername());
@@ -395,6 +400,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/editadmin", method = RequestMethod.POST)
+	@Transactional
 	public String editAdmin(@RequestBody UserDTO userform){
 		BUser user = userRepo.findByUsername(userform.getUsername());
 		if(!user.getFullname().equals(userform.getFullname())) {
@@ -489,38 +495,46 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/editcomp", method = RequestMethod.POST)
+	@Transactional
 	public String editComp(@RequestBody List<String> comp){
 		if(comp.get(0)=="") return "Company name can not be blank";
-		if(compRepo.findByCompanyname(comp.get(0))!=null) {
-			return "Company Existed!";
-		}
+		
 		Company company = compRepo.findByCompanyid(Integer.parseInt(comp.get(1)));
-		company.setCompanyname(comp.get(0));
-		compRepo.save(company);
+		if(!company.getCompanyname().equals(comp.get(0))) {
+			if(compRepo.findByCompanyname(comp.get(0))!=null) return "Company Existed!";
+			company.setCompanyname(comp.get(0));
+			compRepo.save(company);
+		}
 		return "Company Edited Successfully!";
 	}
 	
 	@RequestMapping(value="/service/editgroup", method = RequestMethod.POST)
+	@Transactional
 	public String editGroup(@RequestBody List<String> group){
 		if(group.get(0)=="") return "Group code can not be blank";
-		if(groupRepo.findByGroupcodeAndCompany(group.get(0), groupRepo.findByGroupid(Integer.parseInt(group.get(1))).getCompany())!=null) {
-			return "Group Existed!";
-		}
 		Group grp = groupRepo.findByGroupid(Integer.parseInt(group.get(1)));
-		grp.setGroupcode(group.get(0));
-		groupRepo.save(grp);
+		if(!grp.getGroupcode().equals(group.get(0))) {
+			if(groupRepo.findByGroupcode(group.get(0))!=null) return "Group Existed!";
+			grp.setGroupcode(group.get(0));
+			groupRepo.save(grp);
+		}
 		return "Group Edited Successfully!";
 	}
 	
 	@RequestMapping(value="/service/editdept", method = RequestMethod.POST)
+	@Transactional
 	public String editDept(@RequestBody List<String> dept){
 		if(dept.get(1)=="") return "Dept name can not be blank";
 		if(dept.get(0)=="") return "Dept code can not be blank";
-		/*if(deptRepo.findByDeptcodeAndGroup(dept.get(0), deptRepo.findByDeptid(Integer.parseInt(dept.get(2))).getGroup())!=null
-				|| deptRepo.findByDeptnameAndGroup(dept.get(1), deptRepo.findByDeptid(Integer.parseInt(dept.get(2))).getGroup()) !=null){
-			return "Dept Existed!";
-		}*/
 		Dept dpt = deptRepo.findByDeptid(Integer.parseInt(dept.get(2)));
+		if(dpt.getDeptcode().equals(dept.get(0)) && !dpt.getDeptname().equals(dept.get(1))) {
+			if(deptRepo.findByDeptname(dept.get(1))!=null) return "Dept Name existed!";
+		}else if(!dpt.getDeptcode().equals(dept.get(0)) && dpt.getDeptname().equals(dept.get(1))) {
+			if(deptRepo.findByDeptcode(dept.get(0))!=null) return "Dept Code existed!";
+		}else {
+			if(deptRepo.findByDeptname(dept.get(1))!=null) return "Dept Name existed!";
+			if(deptRepo.findByDeptcode(dept.get(0))!=null) return "Dept Code existed!";
+		}
 		dpt.setDeptcode(dept.get(0));
 		dpt.setDeptname(dept.get(1));
 		dpt.setControl(Boolean.valueOf(dept.get(3)));
@@ -530,7 +544,9 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/addcomp", method = RequestMethod.POST)
+	@Transactional
 	public String addComp(@RequestBody List<String> comp){
+		if(comp.get(0)=="") return "Company name can not be blank";
 		if(compRepo.findByCompanyname(comp.get(0))!=null) {
 			return "Company Existed!";
 		}
@@ -541,8 +557,10 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/addgroup", method = RequestMethod.POST)
+	@Transactional
 	public String addGroup(@RequestBody List<String> group){
-		if(groupRepo.findByGroupcodeAndCompany(group.get(1), compRepo.findByCompanyid(Integer.parseInt(group.get(0))))!=null) {
+		if(group.get(1)=="") return "Group code can not be blank";
+		if(groupRepo.findByGroupcode(group.get(1))!=null) {
 			return "Group Existed!";
 		}
 		Group grp = new Group();
@@ -553,11 +571,12 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/adddept", method = RequestMethod.POST)
+	@Transactional
 	public String addDept(@RequestBody List<String> dept){
-		if(deptRepo.findByDeptcodeAndGroup(dept.get(1), groupRepo.findByGroupid(Integer.parseInt(dept.get(0))))!=null
-				|| deptRepo.findByDeptnameAndGroup(dept.get(2), groupRepo.findByGroupid(Integer.parseInt(dept.get(0)))) !=null){
-			return "Dept Existed!";
-		}
+		if(dept.get(2)=="") return "Dept name can not be blank";
+		if(dept.get(1)=="") return "Dept code can not be blank";
+		if(deptRepo.findByDeptname(dept.get(2))!=null) return "Dept Name existed!";
+		if(deptRepo.findByDeptcode(dept.get(1))!=null) return "Dept Code existed!";
 		Dept dpt = new Dept();
 		dpt.setGroup(groupRepo.findByGroupid(Integer.parseInt(dept.get(0))));
 		dpt.setDeptcode(dept.get(1));
@@ -576,6 +595,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value = "/service/delcompany/{id}", method = RequestMethod.GET)
+	@Transactional
 	public String delCompany(@PathVariable("id") int id){
 		List<Group> groups =  groupRepo.findByCompany(compRepo.findByCompanyid(id));
 		for(Group group : groups) {
@@ -605,6 +625,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value = "/service/delgroup/{id}", method = RequestMethod.GET)
+	@Transactional
 	public String delGroup(@PathVariable("id") int id){
 		Group group = groupRepo.findByGroupid(id);
 		List<Dept> depts = deptRepo.findByGroup(group);
@@ -631,6 +652,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value = "/service/deldept/{id}", method = RequestMethod.GET)
+	@Transactional
 	public String delDept(@PathVariable("id") int id){
 		Dept dept = deptRepo.findByDeptid(id);
 		List<UserRole> uroles = userroleRepo.findByDept(dept);
@@ -709,6 +731,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/addblinetodept", method = RequestMethod.POST)
+	@Transactional
 	public String addBlinetoDept(@RequestBody BlineDeptForm blinedeptform){
 		List<MapBline_Dept> blines_dept = bldeptRepo.findByDept(deptRepo.findByDeptid(blinedeptform.getDept()));
 		List<Integer> blineid = new ArrayList<>();
@@ -737,6 +760,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/addbline", method = RequestMethod.POST)
+	@Transactional
 	public String addBline(@RequestBody List<String> bline) {		
 		if(blRepo.findByBlcode(bline.get(0))!=null) return "Budget Line Code existed!";
 		if(blRepo.findByBlname(bline.get(1))!=null) return "Budget Line Name existed!";
@@ -748,6 +772,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/addwb", method = RequestMethod.POST)
+	@Transactional
 	public String addWb(@RequestBody List<String> wb) {		
 		if(wbRepo.findByBlineAndWbcode(blRepo.findByBlid(Integer.parseInt(wb.get(0))), wb.get(1))!=null) return "WB Code existed!";
 		if(wbRepo.findByBlineAndWbname(blRepo.findByBlid(Integer.parseInt(wb.get(0))), wb.get(2))!=null) return "WB Name existed!";
@@ -760,6 +785,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/addbg", method = RequestMethod.POST)
+	@Transactional
 	public String addBg(@RequestBody List<String> bg) {		
 		if(bgRepo.findByWbAndBgcode(wbRepo.findByWbid(Integer.parseInt(bg.get(0))), bg.get(1))!=null) return "BG Code existed!";
 		if(bgRepo.findByWbAndBgname(wbRepo.findByWbid(Integer.parseInt(bg.get(0))), bg.get(2))!=null) return "BG Name existed!";
@@ -777,6 +803,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/editbline", method = RequestMethod.POST)
+	@Transactional
 	public String editBline(@RequestBody List<String> bline) {		
 		BudgetLine budgetline = blRepo.findByBlid(Integer.parseInt(bline.get(0)));
 		if(budgetline.getBlcode().equals(bline.get(1)) && !budgetline.getBlname().equals(bline.get(2))) {
@@ -794,6 +821,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/editwb", method = RequestMethod.POST)
+	@Transactional
 	public String editWb(@RequestBody List<String> wb) {		
 		Wb wb1 = wbRepo.findByWbid(Integer.parseInt(wb.get(0)));
 		if(wb1.getWbcode().equals(wb.get(1)) && !wb1.getWbname().equals(wb.get(2))) {
@@ -811,6 +839,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/editbg", method = RequestMethod.POST)
+	@Transactional
 	public String editBg(@RequestBody List<String> bg) {		
 		Bg bg1 = bgRepo.findByBgid(Integer.parseInt(bg.get(0)));
 		if(bg1.getBgcode().equals(bg.get(1)) && !bg1.getBgname().equals(bg.get(2))){
@@ -893,6 +922,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value="/service/addcriteria", method = RequestMethod.POST)
+	@Transactional
 	public String addCriteria(@RequestBody List<String> criteria) {		
 		Criteria crt = new Criteria();
 		crt.setCriterianame(criteria.get(0));
@@ -911,6 +941,7 @@ public class RestController {
 	}
 	
 	@RequestMapping(value = "/service/savecriteria", method = RequestMethod.POST)
+	@Transactional
 	public String saveCriteria(@RequestBody List<List<Integer>> cds) {
 		List<CriteriaDetail> criteriadetails = new ArrayList<>();
 		for(List<Integer> cd : cds) {
@@ -990,22 +1021,6 @@ public class RestController {
 		}
 		return result;
 	}
-	
-	/*@RequestMapping(value = "/service/report", method = RequestMethod.POST)
-	public String exportReport(@RequestBody List<Integer> report_dept) {
-		ExportExcelService export_sv = new ExportExcelService();
-		if(report_dept.get(0)==0) {  //sponsor
-			report_dept.remove(0);
-			List<Budget> budget = budgetRepo.findByDeptIn(deptRepo.findByDeptidIn(report_dept));
-			List<BudgetDetail> bds = bdRepo.getdatagroupby(budget);
-			export_sv.ReportBySponsor(bds);
-		}else { 					  //control
-			report_dept.remove(0);
-			List<Budget> budget = budgetRepo.findByDeptIn(deptRepo.findByDeptidIn(report_dept));		
-			export_sv.ReportByControl(bdRepo.findByBudgetInOrderByBgAsc(budget));
-		}
-		return "Successful!";
-	}*/
 	
 	@RequestMapping(value = "/admin/refresh", method = RequestMethod.GET)
 	@Transactional
