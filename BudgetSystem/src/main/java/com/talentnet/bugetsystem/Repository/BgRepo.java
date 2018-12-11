@@ -14,8 +14,10 @@ import com.talentnet.bugetsystem.Entity.Wb;
 public interface BgRepo extends JpaRepository<Bg, Integer>{
 	List<Bg> findByWb(Wb wb);
 	Bg findByBgid(Integer bgid);
-	Bg findByWbAndBgcode(Wb wb, String wbcode);
-	Bg findByWbAndBgname(Wb wb, String wbname);
+	Bg findByBgcode(String bgcode);
+	Bg findByBgname(String bgname);
+	Bg findByWbAndBgcode(Wb wb, String bgcode);
+	Bg findByWbAndBgname(Wb wb, String bgname);
 	
 	@Transactional
 	void removeByBgid(Integer bgid);

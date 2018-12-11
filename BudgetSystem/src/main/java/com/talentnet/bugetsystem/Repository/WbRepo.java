@@ -14,8 +14,8 @@ import com.talentnet.bugetsystem.Entity.Wb;
 public interface WbRepo extends JpaRepository<Wb, Integer>{
 	List<Wb> findByBline(BudgetLine bline);
 	Wb findByWbid(Integer id);
-	Wb findByBlineAndWbcode(BudgetLine bline, String wbcode);
-	Wb findByBlineAndWbname(BudgetLine bline, String wbname);
+	Wb findByWbcode(String wbcode);
+	Wb findByWbname(String wbname);
 	
 	@Transactional
 	void removeByWbid(Integer wbid);

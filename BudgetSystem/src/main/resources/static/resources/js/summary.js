@@ -201,12 +201,14 @@ $(document).ready(function() {
 						$("#save").attr('disabled', 'disabled');
 						$("#submit").attr('disabled', 'disabled');
 						$("#reject").attr('disabled', 'disaled');
+						$("#import").attr('disabled', 'disaled');
 					}else if(($("#sysrole").val()=="REPORTER" && data[0].bd.budget.status!=0) || ($("#sysrole").val()=="REVIEWER" && data[0].bd.budget.status!=1) || ($("#sysrole").val()=="NOT" && data[0].bd.budget.status!=2)){
 						$("#add-btn").attr('disabled', 'disabled');
 						$("#submit-tool").attr('disabled', 'disabled');
 						$("#submit").attr('disabled', 'disabled');
 						$("#edit").attr('disabled', 'disabled');
 						$("#save").attr('disabled', 'disabled');
+						$("#import").attr('disabled', 'disaled');
 						$("#reject").attr('disabled','disabled');
 					}else if(($("#sysrole").val()=="REPORTER" && data[0].bd.budget.status==0) || ($("#sysrole").val()=="REVIEWER" && data[0].bd.budget.status==1) || ($("#sysrole").val()=="NOT" && data[0].bd.budget.status==2)){
 						$("#edit").removeAttr('disabled');
@@ -215,6 +217,7 @@ $(document).ready(function() {
 						$("#submit-tool").attr('disabled', 'disabled');
 						$("#save").attr('disabled', 'disabled');
 						$("#reject").removeAttr('disabled');
+						$("#import").attr('disabled', 'disaled');
 					}
 					$(".num").autoNumeric('init', {mDec: '0'});
 					$("tbody tr input, select, #add-btn, #save, #submit-tool").attr('disabled', 'disaled');
@@ -462,6 +465,7 @@ $(document).ready(function() {
 				$("#save").attr('disabled', 'disabled');
 				$("#submit").attr('disabled', 'disabled');
 				$("#reject").attr('disabled', 'disaled');
+				$("#import").attr('disabled', 'disaled');
 				$("tbody tr input, select").attr('disabled', 'disaled');
 			},
 			error: function(e){
@@ -488,6 +492,7 @@ $(document).ready(function() {
 				$("#add-btn").attr('disabled', 'disabled');
 				$("#submit-tool").attr('disabled', 'disabled');
 				$("#edit").attr('disabled', 'disabled');
+				$("#import").attr('disabled', 'disaled');
 				$("#save").attr('disabled', 'disabled');
 				$("#submit").attr('disabled', 'disabled');
 				$("#reject").attr('disabled', 'disaled');
@@ -510,6 +515,7 @@ $(document).ready(function() {
        	$("#edit").attr('disabled', 'disabled');
        	$("#submit").attr('disabled', 'disabled');
        	$("#reject").attr('disabled', 'disaled');
+       	$("#import").removeAttr('disabled');
        	isEditting=1;
     });
     

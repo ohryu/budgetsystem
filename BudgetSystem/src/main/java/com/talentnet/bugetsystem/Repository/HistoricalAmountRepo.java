@@ -12,11 +12,11 @@ import com.talentnet.bugetsystem.Entity.HistoricalAmount;
 
 @Repository
 public interface HistoricalAmountRepo extends JpaRepository<HistoricalAmount, Integer>{
-	@Query(value="select WB_CODE from BHISAMOUNT where COMPANYID= ? group by WB_CODE", nativeQuery = true)
-	public List<String> findWB(int companyid);
+	@Query(value="select BL_CODE from BHISAMOUNT where COMPANYID= ? group by BL_CODE", nativeQuery = true)
+	public List<String> findBL(int companyid);
 	
 	public List<HistoricalAmount> findByCompanyid(int companyid);
-	public HistoricalAmount findByWbcodeAndSponsor(String code, String sponsor);
+	public HistoricalAmount findByBlcodeAndSponsor(String code, String sponsor);
 	
 	@Transactional
 	void removeByCompanyid(int companyid);

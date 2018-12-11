@@ -5,7 +5,7 @@ public class bdsqueryDTO {
 	private String deptcode;
 	private String blname;
 	private String blcode;
-	
+	private String bltype;
 	
 	public Long getAmount() {
 		return amount;
@@ -32,11 +32,18 @@ public class bdsqueryDTO {
 		this.blcode = blcode;
 	}
 	
-	public bdsqueryDTO(Long amount, String deptcode, String blname, String blcode) {
+	public String getBltype() {
+		return bltype;
+	}
+	public void setBltype(String bltype) {
+		this.bltype = bltype;
+	}
+	public bdsqueryDTO(Long amount, String deptcode, String blname, String blcode, String bltype) {
 		this.amount = amount;
 		this.deptcode = deptcode;
 		this.blname = blname;
 		this.blcode = blcode;
+		this.bltype = bltype;
 	}
 	
 	

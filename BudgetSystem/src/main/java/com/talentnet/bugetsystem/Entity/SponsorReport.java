@@ -31,6 +31,9 @@ public class SponsorReport {
 	@Column(name = "BL_CODE")
 	private String blcode;
 	
+	@Column(name = "BL_TYPE")
+	private String bltype;
+	
 	@Column(name = "BUDGET_ID")
 	private Integer budget;
 
@@ -89,6 +92,13 @@ public class SponsorReport {
 	public void setBudget(Integer budget) {
 		this.budget = budget;
 	}
-	
-	
+
+	public String getBltype() {
+		return bltype;
+	}
+
+	public void setBltype(String bltype) {
+		this.bltype = bltype;
+	}
+
 }

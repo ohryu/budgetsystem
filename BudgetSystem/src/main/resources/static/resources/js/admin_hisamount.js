@@ -22,7 +22,7 @@ $(document).ready(function() {
 								<td>Budget Name</td>\
 								<td>Code</td>';
 				$.each(hisamount, function(key1, val1){
-					if(val1.wbcode==bline[0])
+					if(val1.blcode==bline[0])
 					thead +='<td>'+val1.sponsor+'</td>';
 				})
 				thead+='</tr></thead>';
@@ -30,12 +30,12 @@ $(document).ready(function() {
 					tbody+='<tr>';
 					col = 0;
 					$.each(hisamount, function(key1, val1){
-						if(val1.wbcode==val && col==0){
-							tbody+='<td>'+val1.wbname+'</td>';
-							tbody+='<td>'+val1.wbcode+'</td>';
+						if(val1.blcode==val && col==0){
+							tbody+='<td>'+val1.blname+'</td>';
+							tbody+='<td>'+val1.blcode+'</td>';
 							col++;
 						}
-						if(val1.wbcode==val){
+						if(val1.blcode==val){
 							tbody+='<td>'+parseInt(val1.amount).toLocaleString()+'</td>';
 						}
 					})

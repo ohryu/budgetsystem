@@ -19,11 +19,11 @@ public class HistoricalAmount implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer haid;
 	
-	@Column(name = "WB_NAME")
-	private String wbname;
+	@Column(name = "BL_NAME")
+	private String blname;
 
-	@Column(name = "WB_CODE")
-	private String wbcode;
+	@Column(name = "BL_CODE")
+	private String blcode;
 	
 	@Column(name = "SPONSOR")
 	private String sponsor;
@@ -42,20 +42,20 @@ public class HistoricalAmount implements Serializable{
 		this.haid = haid;
 	}
 
-	public String getWbname() {
-		return wbname;
+	public String getBlname() {
+		return blname;
 	}
 
-	public void setWbname(String wbname) {
-		this.wbname = wbname;
+	public void setBlname(String blname) {
+		this.blname = blname;
 	}
 
-	public String getWbcode() {
-		return wbcode;
+	public String getBlcode() {
+		return blcode;
 	}
 
-	public void setWbcode(String wbcode) {
-		this.wbcode = wbcode;
+	public void setBlcode(String blcode) {
+		this.blcode = blcode;
 	}
 
 	public String getSponsor() {

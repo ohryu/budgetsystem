@@ -14,18 +14,18 @@ import com.talentnet.bugetsystem.Entity.SponsorReport;
 
 @Repository
 public interface SponsorReportRepo extends JpaRepository<SponsorReport, Integer>{
-	@Query(value = "SELECT new com.talentnet.bugetsystem.DTO.bdsqueryDTO(sum(s.amount), s.deptcode, s.blname, s.blcode) "
+	@Query(value = "SELECT new com.talentnet.bugetsystem.DTO.bdsqueryDTO(sum(s.amount), s.deptcode, s.blname, s.blcode, min(s.bltype)) "
 			+ "FROM SponsorReport s "
 			+ "WHERE s.budget IN :bgs GROUP BY s.deptcode, s.blcode,s.blname")
 	public List<bdsqueryDTO> getdatagroupby(@Param("bgs") List<Integer> bgs);
 	
-	@Query(value = "SELECT new com.talentnet.bugetsystem.DTO.blinequeryDTO (s.blcode, s.blname) "
+	@Query(value = "SELECT new com.talentnet.bugetsystem.DTO.blinequeryDTO (s.blcode, s.blname, min(s.bltype)) "
 			+ "FROM SponsorReport s "
 			+ "WHERE s.budget IN :bgs GROUP BY s.blcode, s.blname")
 	public List<blinequeryDTO> getDistinctBline(@Param("bgs") List<Integer> bgs);
 	
 	@Query(value = "SELECT new com.talentnet.bugetsystem.DTO.deptqueryDTO(s.deptcode) "
 			+ "FROM SponsorReport s "
-			+ "WHERE s.budget IN :bgs GROUP BY s.deptcode")
+			+ "WHERE s.budget IN :bgs GROUP BY s.deptcode ORDER BY s.deptcode asc")
 	public List<deptqueryDTO> getDistinctDept(@Param("bgs") List<Integer> bgs);
 }

@@ -25,6 +25,9 @@ public class BudgetLine implements Serializable{
 	@Column(name = "BL_NAME")
 	private String blname;
 
+	@Column(name = "BL_TYPE")
+	private String bltype;
+
 	public Integer getBlid() {
 		return blid;
 	}
@@ -48,5 +51,12 @@ public class BudgetLine implements Serializable{
 	public void setBlname(String blname) {
 		this.blname = blname;
 	}
-	
+
+	public String getBltype() {
+		return bltype;
+	}
+
+	public void setBltype(String bltype) {
+		this.bltype = bltype;
+	}
 }

@@ -3,6 +3,7 @@ package com.talentnet.bugetsystem.DTO;
 public class blinequeryDTO {
 	private String blcode;
 	private String blname;
+	private String bltype;
 	public String getBlcode() {
 		return blcode;
 	}
@@ -15,9 +16,18 @@ public class blinequeryDTO {
 	public void setBlname(String blname) {
 		this.blname = blname;
 	}
-	public blinequeryDTO(String blcode, String blname) {
+	
+	public String getBltype() {
+		return bltype;
+	}
+	public void setBltype(String bltype) {
+		this.bltype = bltype;
+	}
+	
+	public blinequeryDTO(String blcode, String blname, String bltype) {
 		this.blcode = blcode;
 		this.blname = blname;
+		this.bltype = bltype;
 	}
 	
 	

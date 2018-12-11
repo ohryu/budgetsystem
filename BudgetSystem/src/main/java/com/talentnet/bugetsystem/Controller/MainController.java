@@ -86,6 +86,9 @@ public class MainController {
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		userInfo.add("NOT");
 		model.addAttribute("userInfo", userInfo);
+		if(!userRepo.findByUsername(userName).isActive()) {
+			return "password";
+		}
 		List<CompanyDTO> companydtos = new ArrayList<>();
 		List<Company> companies = companyRepo.findAll();
 		for(Company company : companies) {
@@ -118,6 +121,9 @@ public class MainController {
 		List<String> userInfo = new ArrayList<>();
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
+		if(!userRepo.findByUsername(userName).isActive()) {
+			return "password";
+		}
 		List<Company> companies = companyRepo.findAll();
 		model.addAttribute("companies", companies);
 		model.addAttribute("userInfo", userInfo);
@@ -133,6 +139,9 @@ public class MainController {
 		List<String> userInfo = new ArrayList<>();
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
+		if(!userRepo.findByUsername(userName).isActive()) {
+			return "password";
+		}
 		List<Company> companies = companyRepo.findAll();
 		model.addAttribute("companies", companies);
 		model.addAttribute("userInfo", userInfo);
@@ -247,6 +256,9 @@ public class MainController {
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		model.addAttribute("userInfo", userInfo);
+		if(!userRepo.findByUsername(userName).isActive()) {
+			return "password";
+		}
 		List<UserRole> accounts = userroleRepo.findAll();
 		model.addAttribute("accounts", accounts);
 		return "account";
@@ -273,6 +285,9 @@ public class MainController {
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		userInfo.add("NOT");
+		if(!userRepo.findByUsername(userName).isActive()) {
+			return "password";
+		}
 		model.addAttribute("userInfo", userInfo);
 		return "admin_dept";
 	}
@@ -285,6 +300,9 @@ public class MainController {
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		userInfo.add("NOT");
+		if(!userRepo.findByUsername(userName).isActive()) {
+			return "password";
+		}
 		model.addAttribute("userInfo", userInfo);
 		return "admin_bline_dept";
 	}
@@ -297,6 +315,9 @@ public class MainController {
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		userInfo.add("NOT");
+		if(!userRepo.findByUsername(userName).isActive()) {
+			return "password";
+		}
 		model.addAttribute("userInfo", userInfo);
 		return "admin_bline";
 	}
@@ -308,6 +329,9 @@ public class MainController {
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		userInfo.add("NOT");
+		if(!userRepo.findByUsername(userName).isActive()) {
+			return "password";
+		}
 		List<Company> companies = companyRepo.findAll();
 		model.addAttribute("companies", companies);
 		model.addAttribute("userInfo", userInfo);
@@ -322,6 +346,9 @@ public class MainController {
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		userInfo.add("NOT");	
+		if(!userRepo.findByUsername(userName).isActive()) {
+			return "password";
+		}
 		model.addAttribute("userInfo", userInfo);
 		return "report";
 	}
@@ -334,6 +361,9 @@ public class MainController {
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getFullname());
 		userInfo.add(this.userRepo.findByUsername(principal.getName()).getRole().getRolename());
 		userInfo.add("NOT");
+		if(!userRepo.findByUsername(userName).isActive()) {
+			return "password";
+		}
 		model.addAttribute("userInfo", userInfo);
 		return "report";
 	}

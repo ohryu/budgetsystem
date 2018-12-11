@@ -151,12 +151,12 @@ public class RestController {
 							del = 0;
 							break;
 						}
-					}
-					if(del ==1) {
-						mdtRepo.removeByBudgetdetail(bd);
-						bdRepo.delete(bd);
-					}
-				}		
+					}		
+				}	
+				if(del ==1) {
+					mdtRepo.removeByBudgetdetail(bd);
+					bdRepo.delete(bd);
+				}
 			}
 			for(BudgetDTO budget : budgets) {
 				if(budget.getId()!=null) {
@@ -314,7 +314,7 @@ public class RestController {
 			if(roles.getRole()==1) {
 				UserRole urole = new UserRole();
 				if(!userroleRepo.findByGroup(groupRepo.findByGroupid(roles.getGroup())).isEmpty()) {
-					return "Reviewer For Group "+ groupRepo.findByGroupid(roles.getGroup()).getGroupcode()+" Existed!";
+					return userroleRepo.findByGroup(groupRepo.findByGroupid(roles.getGroup())).get(0).getUser().getFullname() + " has already been Reviewer for group "+ groupRepo.findByGroupid(roles.getGroup()).getGroupcode();
 				};
 				userRepo.save(user);
 				urole.setUser(userRepo.findByUsername(userform.getUsername()));
@@ -324,7 +324,7 @@ public class RestController {
 			}else {
 				UserRole urole = new UserRole();
 				if(!userroleRepo.findByDept(deptRepo.findByDeptid(roles.getDept())).isEmpty()) {
-					return "Reporter For Dept "+ deptRepo.findByDeptid(roles.getDept()).getDeptname()+" Existed!";
+					return userroleRepo.findByDept(deptRepo.findByDeptid(roles.getDept())).get(0).getUser().getFullname() +" has already been Reporter for Dept "+ deptRepo.findByDeptid(roles.getDept()).getDeptname();
 				};
 				userRepo.save(user);
 				urole.setUser(userRepo.findByUsername(userform.getUsername()));
@@ -377,7 +377,7 @@ public class RestController {
 			if(roles.getRole()==1) {
 				UserRole urole = new UserRole();
 				if(userroleRepo.findByGroup(groupRepo.findByGroupid(roles.getGroup())).size()>1) {
-					return "Reviewer For Group "+ groupRepo.findByGroupid(roles.getGroup()).getGroupcode()+" Existed!";
+					return userroleRepo.findByGroup(groupRepo.findByGroupid(roles.getGroup())).get(0).getUser().getFullname() + " has already been Reviewer for group "+ groupRepo.findByGroupid(roles.getGroup()).getGroupcode();
 				};
 				urole.setUser(userRepo.findByUsername(userform.getUsername()));
 				urole.setGroup(groupRepo.findByGroupid(roles.getGroup()));
@@ -386,7 +386,7 @@ public class RestController {
 			}else {
 				UserRole urole = new UserRole();
 				if(userroleRepo.findByDept(deptRepo.findByDeptid(roles.getDept())).size()>1) {
-					return "Reporter For Dept "+ deptRepo.findByDeptid(roles.getDept()).getDeptname()+" Existed!";
+					return userroleRepo.findByDept(deptRepo.findByDeptid(roles.getDept())).get(0).getUser().getFullname() +" has already been Reporter for Dept "+ deptRepo.findByDeptid(roles.getDept()).getDeptname();
 				};
 				urole.setUser(userRepo.findByUsername(userform.getUsername()));
 				urole.setDept(deptRepo.findByDeptid(roles.getDept()));
@@ -767,6 +767,7 @@ public class RestController {
 		BudgetLine budgetline = new BudgetLine();
 		budgetline.setBlcode(bline.get(0));
 		budgetline.setBlname(bline.get(1));
+		budgetline.setBltype(bline.get(2));
 		blRepo.save(budgetline);
 		return "Successful!";
 	}
@@ -774,8 +775,8 @@ public class RestController {
 	@RequestMapping(value="/service/addwb", method = RequestMethod.POST)
 	@Transactional
 	public String addWb(@RequestBody List<String> wb) {		
-		if(wbRepo.findByBlineAndWbcode(blRepo.findByBlid(Integer.parseInt(wb.get(0))), wb.get(1))!=null) return "WB Code existed!";
-		if(wbRepo.findByBlineAndWbname(blRepo.findByBlid(Integer.parseInt(wb.get(0))), wb.get(2))!=null) return "WB Name existed!";
+		if(wbRepo.findByWbcode(wb.get(1))!=null) return "WB Code existed!";
+		if(wbRepo.findByWbname(wb.get(2))!=null) return "WB Name existed!";
 		Wb wb1 = new Wb();
 		wb1.setBline(blRepo.findByBlid(Integer.parseInt(wb.get(0))));
 		wb1.setWbcode(wb.get(1));
@@ -807,15 +808,16 @@ public class RestController {
 	public String editBline(@RequestBody List<String> bline) {		
 		BudgetLine budgetline = blRepo.findByBlid(Integer.parseInt(bline.get(0)));
 		if(budgetline.getBlcode().equals(bline.get(1)) && !budgetline.getBlname().equals(bline.get(2))) {
-			if(blRepo.findByBlname(bline.get(1))!=null) return "Budget Line Name existed!";
+			if(blRepo.findByBlname(bline.get(2))!=null) return "Budget Line Name existed!";
 		}else if(budgetline.getBlname().equals(bline.get(2)) && !budgetline.getBlcode().equals(bline.get(1))){
-			if(blRepo.findByBlname(bline.get(1))!=null) return "Budget Line Name existed!";
+			if(blRepo.findByBlname(bline.get(1))!=null) return "Budget Line Code existed!";
 		}else if(!budgetline.getBlname().equals(bline.get(2)) && !budgetline.getBlcode().equals(bline.get(1))){
 			if(blRepo.findByBlcode(bline.get(0))!=null) return "Budget Line Code existed!";
 			if(blRepo.findByBlname(bline.get(1))!=null) return "Budget Line Name existed!";
 		}
 		budgetline.setBlcode(bline.get(1));
 		budgetline.setBlname(bline.get(2));
+		budgetline.setBltype(bline.get(3));
 		blRepo.save(budgetline);
 		return "Successful!";
 	}
@@ -825,12 +827,12 @@ public class RestController {
 	public String editWb(@RequestBody List<String> wb) {		
 		Wb wb1 = wbRepo.findByWbid(Integer.parseInt(wb.get(0)));
 		if(wb1.getWbcode().equals(wb.get(1)) && !wb1.getWbname().equals(wb.get(2))) {
-			if(wbRepo.findByBlineAndWbname(blRepo.findByBlid(Integer.parseInt(wb.get(0))), wb.get(2))!=null) return "WB Name existed!";
+			if(wbRepo.findByWbname(wb.get(2))!=null) return "WB Name existed!";
 		}else if(!wb1.getWbcode().equals(wb.get(1)) && wb1.getWbname().equals(wb.get(2))) {
-			if(wbRepo.findByBlineAndWbcode(blRepo.findByBlid(Integer.parseInt(wb.get(0))), wb.get(1))!=null) return "WB Code existed!";
+			if(wbRepo.findByWbcode(wb.get(1))!=null) return "WB Code existed!";
 		}else if(!wb1.getWbcode().equals(wb.get(1)) && !wb1.getWbname().equals(wb.get(2))) {
-			if(wbRepo.findByBlineAndWbcode(blRepo.findByBlid(Integer.parseInt(wb.get(0))), wb.get(1))!=null) return "WB Code existed!";
-			if(wbRepo.findByBlineAndWbname(blRepo.findByBlid(Integer.parseInt(wb.get(0))), wb.get(2))!=null) return "WB Name existed!";
+			if(wbRepo.findByWbcode(wb.get(1))!=null) return "WB Code existed!";
+			if(wbRepo.findByWbname(wb.get(2))!=null) return "WB Name existed!";
 		}
 		wb1.setWbcode(wb.get(1));
 		wb1.setWbname(wb.get(2));
@@ -967,7 +969,7 @@ public class RestController {
 	
 	@RequestMapping(value = "/service/gethisbl/{id}", method = RequestMethod.GET)
 	public List<String> getHisBL(@PathVariable("id") int id){
-		return haRepo.findWB(id);
+		return haRepo.findBL(id);
 	}
 	
 	@RequestMapping(value = "/service/hatool", method = RequestMethod.POST)
@@ -978,10 +980,10 @@ public class RestController {
 			for(List<String> data : datas) {
 				Dept dept = deptRepo.findByDeptid(Integer.parseInt(data.get(0)));
 				BudgetLine bline = blRepo.findByBlid(Integer.parseInt(data.get(1)));
-				Integer percent = Integer.parseInt(data.get(2));
-				HistoricalAmount ha = haRepo.findByWbcodeAndSponsor(bline.getBlcode(), dept.getDeptcode());
+				Float percent = Float.parseFloat(data.get(2));
+				HistoricalAmount ha = haRepo.findByBlcodeAndSponsor(bline.getBlcode(), dept.getDeptcode());
 				if(ha == null) result.add((long) 0);
-				else result.add(ha.getAmount()*(percent/100 + 1));
+				else result.add((long)(ha.getAmount()*(percent/100 + 1)));
 			}
 		}else {
 			if(datas.get(0).get(2).equals("0")) {
@@ -989,11 +991,11 @@ public class RestController {
 					Dept dept = deptRepo.findByDeptid(Integer.parseInt(data.get(0)));
 					BudgetLine bline = blRepo.findByBlid(Integer.parseInt(data.get(1)));
 					Long cost = Long.parseLong(data.get(3));
-					HistoricalAmount ha = haRepo.findByWbcodeAndSponsor(bline.getBlcode(), dept.getDeptcode());
-					HistoricalAmount total = haRepo.findByWbcodeAndSponsor(bline.getBlcode(), "TOTAL");
+					HistoricalAmount ha = haRepo.findByBlcodeAndSponsor(bline.getBlcode(), dept.getDeptcode());
+					HistoricalAmount total = haRepo.findByBlcodeAndSponsor(bline.getBlcode(), "TOTAL");
 					if(ha == null) result.add((long) 0);
 					else if(total.getAmount()==0) result.add((long) 0);
-					else result.add(cost*ha.getAmount()/total.getAmount());
+					else result.add((long)(cost*(double)ha.getAmount()/(double)total.getAmount()));
 				}
 			}else {
 				for(List<String> data : datas) {
@@ -1013,7 +1015,7 @@ public class RestController {
 						result.add((long) 0);
 					}
 					else {
-						result.add((long)(cost*cd1.getAmount()/total));
+						result.add((long)(cost*(float)cd1.getAmount()/(float)total));
 					}
 				}
 			}

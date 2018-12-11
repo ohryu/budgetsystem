@@ -40,10 +40,10 @@ $(document).ready(function() {
 					blinerow = 0;
 					table = "";
 					if(val.wblist.length==0){
-						table+='<tr><td >'+val.bline.blname+'</td>';
+						table+='<tr><td >'+val.bline.blname+' ('+val.bline.bltype+')</td>';
 						table+='<td ><button class="btn btn-info del-bl" data-bl-id="'+val.bline.blid+'">Delete</button>\
 									<button type="button" class="btn btn-info btn-lg edit-bl" data-bl-id="'+val.bline.blid+'"\
-											data-toggle="modal" data-target="#editCompModal">\
+											data-toggle="modal" data-target="#editBLModal">\
 											<span class="glyphicon glyphicon-edit"></span>\
 									</button>\
 								</td>';
@@ -58,7 +58,7 @@ $(document).ready(function() {
 						$.each(val.wblist, function(key1, val1){
 							if(val1.bglist.length==0){
 								if(bline == 0){
-								table+='<tr><td rowspan="'+blinerow+'">'+val.bline.blname+'</td>';
+								table+='<tr><td rowspan="'+blinerow+'">'+val.bline.blname+' ('+val.bline.bltype+')</td>';
 									table+='<td rowspan="'+blinerow+'"><button class="btn btn-info del-bl" data-bl-id="'+val.bline.blid+'">Delete</button>\
 												<button type="button" class="btn btn-info btn-lg edit-bl" data-bl-id="'+val.bline.blid+'"\
 														data-toggle="modal" data-target="#editBLModal">\
@@ -80,7 +80,7 @@ $(document).ready(function() {
 								$.each(val1.bglist, function(key2, val2){
 									table+='<tr>';
 									if(bline == 0){
-										table+='<td rowspan="'+blinerow+'">'+val.bline.blname+'</td>';
+										table+='<td rowspan="'+blinerow+'">'+val.bline.blname+' ('+val.bline.bltype+')</td>';
 										table+='<td rowspan="'+blinerow+'"><button class="btn btn-info del-bl" data-bl-id="'+val.bline.blid+'">Delete</button>\
 													<button type="button" class="btn btn-info btn-lg edit-bl" data-bl-id="'+val.bline.blid+'"\
 															data-toggle="modal" data-target="#editBLModal">\
@@ -128,7 +128,12 @@ $(document).ready(function() {
 		$("#new-budget").append('<label>Budget Line Code: </label>\
 								<input type="text" name="" id="add-bl-blcode"><br>\
 								<label>Budget Line Name: </label>\
-								<input type="text" name="" id="add-bl-blname">');
+								<input type="text" name="" id="add-bl-blname"><br>\
+								<select id="edit-BL-bltype">\
+									<option value="Revenue">Revenue</option>\
+									<option value="TEC">TEC</option>\
+									<option value="None-TEC">None-TEC</option>\
+								</select>');
 	})
 	$("body").off("click", "#add-wb").on("click", "#add-wb", function(){
 		$("#new-budget").empty();
@@ -181,7 +186,7 @@ $(document).ready(function() {
 		var postdata;
 		if(add==1){
 			url = "/service/addbline";
-			postdata = [$("#add-bl-blcode").val(), $("#add-bl-blname").val()];
+			postdata = [$("#add-bl-blcode").val(), $("#add-bl-blname").val(), $("#add-bl-bltype").val()];
 		}else if(add==2){
 			url = "/service/addwb";
 			postdata = [$("#add-wb-blid").val(), $("#add-wb-wbcode").val(), $("#add-wb-wbname").val()];
@@ -217,14 +222,15 @@ $(document).ready(function() {
 			if(val.blid == blid){
 				$("#edit-BL-blcode").val(val.blcode);
 				$("#edit-BL-blname").val(val.blname);
+				$('#edit-BL-bltype option[value='+val.bltype+']').prop('selected',true);
 			}
 		})
-		$("#edit-BL-btn").click(function(){
+		$("body").off("click", "#edit-BL-btn").on("click", "#edit-BL-btn", function(){
 			$.ajax({
 				type: "POST",
 				url : "/service/editbline",
 				contentType : "application/json",
-	    		data: JSON.stringify([blid, $("#edit-BL-blcode").val(), $("#edit-BL-blname").val()]),
+	    		data: JSON.stringify([blid, $("#edit-BL-blcode").val(), $("#edit-BL-blname").val(), $("#edit-BL-bltype").val()]),
 				accept: 'text/plain',
 				success : function(data){
 					if(data.indexOf("Successful!")>-1){
@@ -250,7 +256,7 @@ $(document).ready(function() {
 			}
 		})
 		
-		$("#edit-WB-btn").click(function(){
+		$("body").off("click", "#edit-WB-btn").on("click", "#edit-WB-btn", function(){
 			$.ajax({
 				type: "POST",
 				url : "/service/editwb",
@@ -280,7 +286,7 @@ $(document).ready(function() {
 			success: function(data){
 				$("#edit-BG-bgcode").val(data.bgcode);
 				$("#edit-BG-bgname").val(data.bgname);
-				$("#edit-BG-btn").click(function(){
+				$("body").off("click", "#edit-BG-btn").on("click", "#edit-BG-btn", function(){
 					$.ajax({
 						type: "POST",
 						url : "/service/editbg",
