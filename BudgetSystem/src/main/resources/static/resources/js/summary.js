@@ -36,6 +36,7 @@ $(document).ready(function() {
 		$("#submit").hide();
 	}
 	
+	
 //add budget----------------------------------------------------------------------------------------------------------------------------
 	$("body").off("click", "#add-budget").on("click", "#add-budget", function(){
 		//get wb
@@ -99,13 +100,14 @@ $(document).ready(function() {
 						$(".summary table tbody").append(row);
 					});
 				}
-				$(".num").autoNumeric('init', {mDec: '0'});
+				$(".num").autoNumeric('init', {mDec: '0', vMin:'-9999999999999'});
 			},
 			error : function(e) {
 				alert("System error, please try again!");
 				console.log("ERROR : ", e);
 			}
 		});	
+		
 	});
 	
 //side bar---------------------------------------------------------------------------------------------------------
@@ -219,7 +221,7 @@ $(document).ready(function() {
 						$("#reject").removeAttr('disabled');
 						$("#import").attr('disabled', 'disaled');
 					}
-					$(".num").autoNumeric('init', {mDec: '0'});
+					$(".num").autoNumeric('init', {mDec: '0', vMin:'-9999999999999'});
 					$("tbody tr input, select, #add-btn, #save, #submit-tool").attr('disabled', 'disaled');
 				},
 				error : function(e) {
@@ -243,7 +245,7 @@ $(document).ready(function() {
 		 						<td><input type="text" class="mdt-amount num" data-mdt-id="0" value="0" size="10">\</td>\
 		 						<td colspan=3></td><td><button class="btn btn-info mdt-remove">Delete</button></td>');
 	 			row1.after(newRow);
-	 			$(".num").autoNumeric('init', {mDec: '0'});
+	 			$(".num").autoNumeric('init', {mDec: '0', vMin:'-9999999999999'});
 	 		})
 	 		
 	 		$("body").off("click", ".mdt-remove").on("click", ".mdt-remove",function(){
@@ -258,7 +260,7 @@ $(document).ready(function() {
 		 			})
 	 			}
 	 			bgrow.find(".bg-amount").val(total);
-	 			$(".num").autoNumeric('init', {mDec: '0'});
+	 			$(".num").autoNumeric('init', {mDec: '0', vMin:'-9999999999999'});
 	 			expense = bgrow.find(".expense");
 	 	    	var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
 	 	    	var firstDate = new Date($("#submit-tool").attr("data-date"));
@@ -611,7 +613,7 @@ $(document).ready(function() {
 					}
     		})
     	}
-    	$(".num").autoNumeric('init', {mDec: '0'});
+    	$(".num").autoNumeric('init', {mDec: '0', vMin:'-9999999999999'});
     })
     
     $("body").off("click", "tr.budget-row td.bl").on("click", "tr.budget-row td.bl", function(){
@@ -681,6 +683,26 @@ $(document).ready(function() {
     	}
      })
      
-     $("#cost-allocation").autoNumeric('init', {mDec: '0'});
+    $("#cost-allocation").autoNumeric('init', {mDec: '0', vMin:'-9999999999999'});
     
+    //multiple select checkboxes
+    var lastChecked = null;
+
+    $('body').off('click', '.usetool').on('click', '.usetool', function(e) {
+    	var $chkboxes = $('.usetool');
+        if(!lastChecked) {
+            lastChecked = this;
+            return;
+        }
+
+        if(e.shiftKey) {
+            var start = $chkboxes.index(this);
+            var end = $chkboxes.index(lastChecked);
+
+            $chkboxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', lastChecked.checked);
+
+        }
+
+        lastChecked = this;
+    });
 })
