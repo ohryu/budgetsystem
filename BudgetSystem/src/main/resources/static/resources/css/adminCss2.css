@@ -294,3 +294,13 @@ table.table-striped>tbody>tr>td{
     text-align: center;	
 }
 
+.submenu{
+	position: sticky;
+	top: 0;
+	background-color: white;
+	z-index: 1;
+}
+.w3-sidebar{
+	z-index: 2;
+}
+

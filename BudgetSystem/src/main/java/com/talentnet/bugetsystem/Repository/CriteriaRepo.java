@@ -12,4 +12,5 @@ public interface CriteriaRepo extends JpaRepository<Criteria, Integer>{
 	Criteria findByCriteriaid(Integer id);
 	@Transactional
 	void removeByCriteriaid(Integer id);
+	Criteria findByCriterianame(String criterianame);
 }

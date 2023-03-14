@@ -20,7 +20,12 @@ $(document).ready(function() {
 		success : function(data){
 			detail = data;
 			//click first dept-------------------------------------------------------------------------------------------------------------------
-		    $("div a.dept").first().trigger("click");
+		    if($('#redirect-dept').length){
+		    	var deptcode = $('#redirect-dept').val();
+	    		$('a.dept[data-dept-code="'+deptcode+'"]').trigger("click");	    	
+		    }else{
+		    	$("div a.dept").first().trigger("click");
+		    }
 		},
 		error : function(e) {
 			alert("System error, please try again!");
@@ -120,6 +125,7 @@ $(document).ready(function() {
     
 //select dept-------------------------------------------------------------------------------------------------------
     $("body").off("click", ".dept").on("click", ".dept", function(){
+    	$("#import-dept-code").val($(this).attr("data-dept-code"));
     	if(redirect!=0){
 	    	$("tbody").empty();
 	    	$("#c-dept").attr("data-dept-id",$(this).attr("data-dept-id"));
@@ -705,4 +711,6 @@ $(document).ready(function() {
 
         lastChecked = this;
     });
+    	
+    $("#error-btn").trigger("click");
 })

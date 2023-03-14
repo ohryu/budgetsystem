@@ -4,7 +4,7 @@ $(document).ready(function() {
 	var criteria_detail = [];
 	var isEditting = 0;
 	
-	
+	$("#error-btn").trigger("click");
 	function getData(){
 		$.ajax({
 			type : "GET",

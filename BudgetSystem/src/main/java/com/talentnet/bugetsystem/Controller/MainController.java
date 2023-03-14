@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -78,7 +79,7 @@ public class MainController {
 	}
 	
 	@RequestMapping(value = "/admin/summary", method = RequestMethod.GET)
-	public String adminHome(Model model, Principal principal) {
+	public String adminHome(Model model, Principal principal, @ModelAttribute("errors") String errors, @ModelAttribute("dept") String dept) {
 		String userName = principal.getName();
 		System.out.println("User Name: " + userName);
 		List<String> userInfo = new ArrayList<>();
@@ -105,8 +106,9 @@ public class MainController {
 			companydto.setCompany(company);
 			companydto.setGrouplist(groupdtos);
 			companydtos.add(companydto);
-		}
-		
+		} 
+		model.addAttribute("errors", errors);
+		model.addAttribute("dept", dept);
 		model.addAttribute("companydepts", companydtos);
 		model.addAttribute("date", yearRepo.findAll().get(0));
 		List<Criteria> criterias = criteriaRepo.findAll();
@@ -151,7 +153,7 @@ public class MainController {
 	}
 	
 	@RequestMapping(value = "/user/summary/report", method= RequestMethod.GET)
-	public String report_summary(Model model, Principal principal) {
+	public String report_summary(Model model, Principal principal, @ModelAttribute("errors") String errors, @ModelAttribute("dept") String dept) {
 		String userName = principal.getName();
 		System.out.println("User Name: " + userName);
 		List<String> userInfo = new ArrayList<>();
@@ -195,6 +197,9 @@ public class MainController {
 			companydto.setGrouplist(groupdtos);
 			companydtos.add(companydto);
 		}
+		
+		model.addAttribute("errors", errors);
+		model.addAttribute("dept", dept);
 		model.addAttribute("companydepts", companydtos);
 		List<Criteria> criterias = criteriaRepo.findAll();
 		model.addAttribute("criterias", criterias);
@@ -203,7 +208,7 @@ public class MainController {
 	}
 	
 	@RequestMapping(value = "/user/summary/review", method= RequestMethod.GET)
-	public String review_summary(Model model, Principal principal) {
+	public String review_summary(Model model, Principal principal, @ModelAttribute("errors") String errors, @ModelAttribute("dept") String dept) {
 		String userName = principal.getName();
 		System.out.println("User Name: " + userName);
 		List<String> userInfo = new ArrayList<>();
@@ -242,6 +247,9 @@ public class MainController {
 			companydto.setGrouplist(groupdtos);
 			companydtos.add(companydto);
 		}
+
+		model.addAttribute("errors", errors);
+		model.addAttribute("dept", dept);
 		model.addAttribute("companydepts", companydtos);
 		List<Criteria> criterias = criteriaRepo.findAll();
 		model.addAttribute("criterias", criterias);
@@ -322,7 +330,7 @@ public class MainController {
 		return "admin_bline";
 	}
 	@RequestMapping(value = "/admin/criteria", method = RequestMethod.GET)
-	public String manageCriteria(Model model, Principal principal) {
+	public String manageCriteria(Model model, Principal principal, @ModelAttribute("errors") String errors) {
 		String userName = principal.getName();
 		System.out.println("User Name: " + userName);
 		List<String> userInfo = new ArrayList<>();
@@ -333,6 +341,7 @@ public class MainController {
 			return "password";
 		}
 		List<Company> companies = companyRepo.findAll();
+		model.addAttribute("errors", errors);
 		model.addAttribute("companies", companies);
 		model.addAttribute("userInfo", userInfo);
 		return "admin_criteria";

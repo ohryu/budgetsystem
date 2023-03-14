@@ -39,9 +39,9 @@ public class ExcelExportController {
 		if(report_dept.get(0)==0) {  //sponsor
 			report_dept.remove(0);
 			List<Integer> budgetid = budgetRepo.getBudgedIdByDept(deptRepo.findByDeptidIn(report_dept));
-			List<bdsqueryDTO> bds = srRepo.getdatagroupby(budgetid);
-			List<blinequeryDTO> blines = srRepo.getDistinctBline(budgetid);
-		    List<deptqueryDTO> depts = srRepo.getDistinctDept(budgetid);
+			List<bdsqueryDTO> bds = srRepo.getdatagroupby(budgetid, report_dept);
+			List<blinequeryDTO> blines = srRepo.getDistinctBline(budgetid, report_dept);
+		    List<deptqueryDTO> depts = srRepo.getDistinctDept(budgetid, report_dept);
 		    Map<String, Object> data = new HashMap<String, Object>();
 		    data.put("bds", bds);
 		    data.put("blines", blines);
